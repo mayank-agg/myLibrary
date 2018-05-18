@@ -9,14 +9,14 @@ A university library was chosen as our domain because a library database is a ro
 
 Platform:
 
-Front-end: HTML/CSS + Javascript
+Front-end: HTML/CSS + Javascript:
 HTML/CSS will be used mainly for formatting and styling web pages while Javascript will be used to make the app interactive. 
 
-Back-end: Node.js 
+Back-end: Node.js:
 
 Node.js is a server side scripting language written in Javascript used mainly due to its fast server side solution and flexibility. Since Javascript is used for client-side, using Node will allow us to unify our web application development around a single programming language, rather than different languages for server side and client side scripts. 
 
-Database: MySQL (Relational Database)
+Database: MySQL (Relational Database):
 
 MySQL is chosen because it offers a set of advanced features including platform independency which allows us to use it with Node. In addition, MySQL supports SQL which is easy to implement as it is a simple high-level, strongly typed language.
 
