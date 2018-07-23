@@ -63,7 +63,7 @@ function isLoggedIn(req, res, next)     //middleware
   }
 }
 
-var head= ``    //write code before form here (homepage)
+var head= `<title> myLibrary | Homepage </title> <meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>`    //write code before form here (homepage)
 var body= ``  //write code after form here (homepage)
 
 //serving homepage: must contain a way to login (post request to login), and a link to sign up which sends a get request to "/register".
