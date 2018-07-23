@@ -36,8 +36,9 @@
     </ul>
     <form class="navbar-form navbar-left" action="/search">
       <div class="form-group">
+        //dropdown form for searching books
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">My Books<span class="caret"></span></a>
-         <ul class="dropdown-menu">
+         <ul class="dropdown-menu"> 
            <li><a href="#">ISBN:<input type="text" name="BookISBN"></a><hr></li>
            <li><a href="#">Publisher:<input type="text" name="Publisher"></a><hr></li>
            <li><a href="#">Title:<input type="text" name="Title"></a><hr></li>
@@ -55,7 +56,7 @@
   </div>
 </nav>
   <form action="/search">
-    <select name="colNames" multiple>
+    <select name="colNames" multiple> //checkboxes for columns
       <option value="BookISBN">ISBN</option>
       <option value="Publisher">Publisher</option>
       <option value="Title">Title</option>
