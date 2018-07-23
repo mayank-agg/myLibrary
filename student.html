@@ -65,5 +65,16 @@
     </select>
     <input type="submit" name="Submit">
   </form>
+  <form action="/checkout">
+    <select name="mybooks" multiple>
+      //options omitted since finding books that can be checked out is something to be done in SQL
+    </select>
+    <input type="submit" name="Check Out">
+  </form>
+  <form action="/checkin">
+    <select name="checkinthese" mutliple>
+      //options omitted since finding books that is checked out by the user is something to be done in SQL
+    </select>
+  </form>
 </body>
 </html>
