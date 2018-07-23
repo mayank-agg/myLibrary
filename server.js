@@ -123,7 +123,7 @@ app.post('/login', function(req, res, next)
 app.get('/register', function(req, res, next)
 {
   var idExists= req.flash('error');
-  var newForm= `Name: <br><input type="text" name="fname"><br>Role:<br><input type="radio" name="status" value="student" checked> Student <br><input type="radio" name="status" value="teacher"> Teacher <br><input type="radio" name="status" value="librarian"> Librarian <br>Password:<br><input type="password" name="password"><br><br><input type="submit" value="Submit">` //write register form here. (Action= addMe)
+  var newForm= `Name: <br><input type="text" name="fname"><br>ID:<br><input type="text" name="ID"<br>Role:<br><input type="radio" name="status" value="student" checked> Student <br><input type="radio" name="status" value="teacher"> Teacher <br><input type="radio" name="status" value="librarian"> Librarian <br>Password:<br><input type="password" name="password"><br><br><input type="submit" value="Submit">` //write register form here. (Action= addMe)
   var toServe= head+`<p id="error" style="color: red">`+usernameExists+`</p>`+body+newForm
   res.write(toServe);
   res.end();
