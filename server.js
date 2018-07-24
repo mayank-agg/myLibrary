@@ -49,17 +49,6 @@ con.connect(function(err) {
   console.log("Connected!");
 });
 con.query("use myLibrary354");
-con.query("select * from users", function(err, result, fields)
-{
-  if(err)
-  {
-    console.log(err);
-  }
-  else
-  {
-    console.log(result);
-  }
-});;
 app.use(flash());
 app.use(express.static("."));
 
@@ -139,30 +128,37 @@ app.post('/loginMe', function(req, res, next)
   var myid= `${req.body.id}`;
   //select from the mystatus table
 //  db query- initialize user with person with given credentials= select * from mystatus where id= myid. (find user with the id and then take the full tuple and initialize user with that tuple.)
-
-  if(user == null)   //id doesnt exist.
+  con.query("select * from users where userid="+myid, function(err, result)
   {
-    //send them back to login.
-    req.flash('error', 'No user found. Please register. ');
-    res.redirect('/');     //make a get request to login.
-  }
-  else    //user found
-  {
-    //serve status oriented html page.
-    req.session.user= user;   //user is an object with properties: mystatus, myid, mypassword
-    if(mystatus== "Student")
+    var resultArr= result;      //an array of users. 
+    console.log(result);
+    user= result[0];
+    var mystatus= result[0].Status;
+    if(user == null)   //id doesnt exist.
     {
-      res.redirect('/student');
+      //send them back to login.
+      req.flash('error', 'No user found. Please register. ');
+      res.redirect('/');     //make a get request to login.
     }
-    else if(mystatus== "Teacher")
+    else    //user found
     {
-      res.redirect('/teacher');
+      //serve status oriented html page.
+      req.session.user= user;   //user is an object with properties: mystatus, myid, mypassword
+      console.log("user found");
+      if(mystatus== "Student")
+      {
+        res.redirect('/student');
+      }
+      else if(mystatus== "Teacher")
+      {
+        res.redirect('/teacher');
+      }
+      else
+      {
+        res.redirect('/librarian');
+      }
     }
-    else
-    {
-      res.redirect('/librarian');
-    }
-  }
+  });
 });
 
 //user wants to sign up.
