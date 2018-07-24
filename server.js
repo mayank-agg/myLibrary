@@ -32,6 +32,7 @@ var express= require('express');
 var http= require('http');
 var session= require('express-session');
 var flash= require('express-flash');
+var fs= require('fs');
 var app= express();
 
 var port= 8080;
@@ -63,28 +64,42 @@ function isLoggedIn(req, res, next)     //middleware
   }
 }
 
-var head= `<title> myLibrary | Homepage </title> <meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>`    //write code before form here (homepage) 
-var body= '<nav class="navbar navbar-inverse navbar-static-top"> <div class="container-fluid"><div class="navbar-header"><a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a></div><ul class="nav navbar-nav"><li><a href="#">Home</a></li><li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Browse<span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#">Science</a><hr></li><li><a href="#">Biographies</a><hr></li><li><a href="#">Textbooks</a><hr></li><li><a href="#">Sci-fi</a><hr></li><li><a href="#">Fantasy</a></li></ul></li><li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">My Books<span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#">My Lists</a><hr></li><li><a href="#">My Reading Logs</a><hr></li><li><a href="#">My Loans</a></li></ul></li></ul><form class="navbar-form navbar-left" action="/searchMe"><div class="form-group"><input type="text" name="attributeValue" class="form-control" placeholder="Search"><select class="form-control" name="bookAttribute"><option>Title</option><option>Author</option><option>Publisher</option><option>ISBN</option></select></div><button type="submit" class="btn btn-default">Submit</button></form><ul class="nav navbar-nav navbar-right"><li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li><li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li></ul></div></nav>'
+var head= `<!DOCTYPE html>
+<html>
+<head>
+<title> myLibrary | Homepage </title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel= "stylesheet" href='./homepage.css'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>`
 
+var body= `<body>
+  <nav class="navbar navbar-inverse navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+   </ul>
+   </nav>`
 //serving homepage: must contain a way to login (post request to login), and a link to sign up which sends a get request to "/register".
-app.use('/', function(req, res, next)
+app.get('/', function(req, res, next)
 {
   var errorMessage= req.flash('error');
   var successRegister= req.flash('success');
-
-
-  var formHead= `<p style= "color: red" id= "error">`+errorMessage+`</p><p style="color: blue" id="success">`+successRegister+`</p><section id='loginSection'><form id="loginForm" action="/login" method="POST">`
-// var form= write full login form.html here
-  var form= 'Name: <br><input type="text" name="fname"><br> Password: <br><input type="password" name="password"><br><br><input type="submit" value="Submit">'
-  var fullPage= head + body + formHead + form
-  res.write('fullpage');
+  var fileReturn= fs.readFileSync("./homepage.html");
+  res.write(fileReturn);
   res.end();
 });
 
 //user has clicked on "login" on homepage (form action= '/login')
-app.post('/login', function(req, res, next)
+app.post('/loginMe', function(req, res, next)
 {
   //check database to see if user exists.
+  console.log("here");
   var user= null;
   //users table: 3 tables with 2 columns each. : Student(Id, Passowrd), Teacher(id, password), Librarian(ID, password)
   var myid= `${req.body.id}`;
@@ -97,6 +112,7 @@ app.post('/login', function(req, res, next)
   if(user == null)   //username doesnt exist.
   {
     //send them back to login.
+    console.log("Wrong details");
     req.flash('error', 'No user found. Please register. ');
     res.redirect('/');     //make a get request to login.
   }

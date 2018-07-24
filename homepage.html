@@ -14,43 +14,18 @@
     <div class="navbar-header">
       <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
     </div>
-    <ul class="nav navbar-nav">
-      <li><a href="#">Home</a></li>
-      <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Browse<span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          <li><a href="#">Science</a><hr></li>
-          <li><a href="#">Biographies</a><hr></li>
-          <li><a href="#">Textbooks</a><hr></li>
-          <li><a href="#">Sci-fi</a><hr></li>
-          <li><a href="#">Fantasy</a></li>
-        </ul>
-      </li>
-      <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">My Books<span class="caret"></span></a>
-      <ul class="dropdown-menu">
-          <li><a href="#">My Lists</a><hr></li>
-          <li><a href="#">My Reading Logs</a><hr></li>
-          <li><a href="#">My Loans</a></li>
-        </ul>
-      </li>
-    </ul>
-    <form class="navbar-form navbar-left" action="/searchMe">
-      <div class="form-group">
-        <input type="text" name="attributeValue" class="form-control" placeholder="Search">
-        <select class="form-control" name="bookAttribute">
-          <option>Title</option>
-          <option>Author</option>
-          <option>Publisher</option>
-          <option>ISBN</option>
-      </select>
-      </div>
-      <button type="submit" class="btn btn-default">Submit</button>
-    </form>
     <ul class="nav navbar-nav navbar-right">
-     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+     <li><a href="/signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
    </ul>
-  </div>
-</nav>
-</body>
+   </nav>
+   <div style="margin: 10px"><h4> Please login first </h4><br> <form action= "/loginMe" method="POST">
+   <label for="userid"><b> User id: </b></label>
+   <input type="text" name= "id" id= "userid"><br><br>
+   <label for="fname"><b> First Name: </b></label>
+   <input type= "text" name= "fname" id= "fname"><br><br>
+   <label for="password"><b> Password: </b></label>
+   <input type= "password" name= "password" id= "password"><br><br>
+   <input type="submit" value="Login" id= "submit">
+   </form></div>
+  </body>
 </html>
