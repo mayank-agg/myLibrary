@@ -82,7 +82,7 @@ var body= `<body>
       <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
     </div>
     <ul class="nav navbar-nav navbar-right">
-     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+     <li><a href="/signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
    </ul>
    </nav>`
 //serving homepage: must contain a way to login (post request to login), and a link to sign up which sends a get request to "/register".
@@ -90,8 +90,19 @@ app.get('/', function(req, res, next)
 {
   var errorMessage= req.flash('error');
   var successRegister= req.flash('success');
-  var fileReturn= fs.readFileSync("./homepage.html");
-  res.write(fileReturn);
+  var formHead= `<p>`+errorMessage+`</p>`+`<p>`+successRegister+`</p>`
+  var form= `<div style="margin: 10px"><h4> Please login first </h4><br> <form action= "/loginMe" method="POST">
+  <label for="userid"><b> User id: </b></label>
+  <input type="text" name= "id" id= "userid"><br><br>
+  <label for="fname"><b> First Name: </b></label>
+  <input type= "text" name= "fname" id= "fname"><br><br>
+  <label for="password"><b> Password: </b></label>
+  <input type= "password" name= "password" id= "password"><br><br>
+  <input type="submit" value="Login" id= "submit">
+  </form></div>
+ </body>
+</html>`
+  res.write(head+body+formHead+form);
   res.end();
 });
 
@@ -103,16 +114,12 @@ app.post('/loginMe', function(req, res, next)
   var user= null;
   //users table: 3 tables with 2 columns each. : Student(Id, Passowrd), Teacher(id, password), Librarian(ID, password)
   var myid= `${req.body.id}`;
-  var mypassword= `${req.body.password}`;
-  var mystatus= `${req.body.status}`;   //radio html button
-
   //select from the mystatus table
-//  db query- initialize user with person with given credentials= select * from mystatus where id= myid and mypassword= mypassword;
+//  db query- initialize user with person with given credentials= select * from mystatus where id= myid. (find user with the id and then take the full tuple and initialize user with that tuple.)
 
-  if(user == null)   //username doesnt exist.
+  if(user == null)   //id doesnt exist.
   {
     //send them back to login.
-    console.log("Wrong details");
     req.flash('error', 'No user found. Please register. ');
     res.redirect('/');     //make a get request to login.
   }
