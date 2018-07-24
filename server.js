@@ -80,8 +80,9 @@ var body= `<body>
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
-    </div>
-    <ul class="nav navbar-nav navbar-right">
+    </div>`
+
+var signup=  `<ul class="nav navbar-nav navbar-right">
      <li><a href="/signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
    </ul>
    </nav>`
@@ -102,7 +103,7 @@ app.get('/', function(req, res, next)
   </form></div>
  </body>
 </html>`
-  res.write(head+body+formHead+form);
+  res.write(head+body+signup+formHead+form);
   res.end();
 });
 
@@ -190,21 +191,27 @@ app.post('/addMe', function(req, res, next)
 app.get('/student',isLoggedIn, function(req, res, next)
 {
   var message= req.flash('success');  //on succesfully checking in/out books.
-  //append this message to html page.
+  var messageHead= `<p>`+message+`</p>`;
+
+  //write student.html here
 
 });
 
 app.get('/teacher',isLoggedIn, function(req, res, next)
 {
   var message= req.flash('success');      //on succesfully checking in/out books.
-  //append this message to html page.
+  var messageHead= `<p>`+message+`</p>`;
+
+  //write teacher.html here
 
 });
 
 app.get('/librarian',isLoggedIn, function(req, res, next)
 {
   var message= req.flash('error');    //(on no users found for division query)
-//append this message to html page.
+  var messageHead= `<p>`+message+`</p>`;
+
+  //write librarian.html here
 
 });
 
@@ -244,6 +251,7 @@ app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
 app.get('/allWorkBooks', isLoggedIn, function(req, res, next)
 {
   //db query: select * from workbooks
+  //take the result and write into html and then return that file.
 })
 
 app.post('/checkout',isLoggedIn, function(req, res, next)
