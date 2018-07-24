@@ -55,7 +55,7 @@
    </ul>
   </div>
 </nav>
-  <form action="/search">
+  <form action="/search" method="POST">
    <input type="checkbox" name="colNames" value="BookISBN">ISBN<br>
 	<input type="checkbox" name="colNames" value="Publisher">Publisher<br>
 	<input type="checkbox" name="colNames" value="Title">Title<br>
@@ -65,13 +65,13 @@
 	<br>
     <input type="submit" name="Submit">
   </form>
-  <form action="/checkout" method="GET">
+  <form action="/checkout" method="POST">
     <select name="mybooks" multiple>
       //options omitted since finding books that can be checked out is something to be done in SQL
     </select>
     <input type="submit" name="Check Out">
   </form>
-  <form action="/checkin" method="GET">
+  <form action="/checkin" method="POST">
     <select name="checkinthese" mutliple>
       //options omitted since finding books that is checked out by the user is something to be done in SQL
     </select>
