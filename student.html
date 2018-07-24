@@ -56,13 +56,13 @@
   </div>
 </nav>
   <form action="/search">
-    <select name="colNames" multiple> //checkboxes for columns
-      <option value="BookISBN">ISBN</option>
-      <option value="Publisher">Publisher</option>
-      <option value="Title">Title</option>
-      <option value="Author">Author</option>
-      <option value="Genre">Genre</option>
-    </select>
+   <input type="checkbox" name="colNames" value="BookISBN">ISBN<br>
+	<input type="checkbox" name="colNames" value="Publisher">Publisher<br>
+	<input type="checkbox" name="colNames" value="Title">Title<br>
+	<input type="checkbox" name="colNames" value="Author">Author<br>
+	<input type="checkbox" name="colNames" value="Genre">Genre<br>
+	
+	<br>
     <input type="submit" name="Submit">
   </form>
   <form action="/checkout" method="GET">
