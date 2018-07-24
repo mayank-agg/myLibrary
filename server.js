@@ -33,11 +33,33 @@ var http= require('http');
 var session= require('express-session');
 var flash= require('express-flash');
 var fs= require('fs');
+var mysql= require('mysql');
 var app= express();
 
 var port= 8080;
 var server= http.createServer(app).listen(port);
 
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
+con.query("use myLibrary354");
+con.query("select * from users", function(err, result, fields)
+{
+  if(err)
+  {
+    console.log(err);
+  }
+  else
+  {
+    console.log(result);
+  }
+});;
 app.use(flash());
 app.use(express.static("."));
 
