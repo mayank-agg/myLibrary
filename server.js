@@ -180,21 +180,21 @@ app.post('/addMe', function(req, res, next)
   }
 });
 
-app.get('/student', function(req, res, next)
+app.get('/student',isLoggedIn, function(req, res, next)
 {
   var message= req.flash('success');  //on succesfully checking in/out books.
   //append this message to html page.
 
 });
 
-app.get('/teacher', function(req, res, next)
+app.get('/teacher',isLoggedIn, function(req, res, next)
 {
   var message= req.flash('success');      //on succesfully checking in/out books.
   //append this message to html page.
 
 });
 
-app.get('/librarian', function(req, res, next)
+app.get('/librarian',isLoggedIn, function(req, res, next)
 {
   var message= req.flash('error');    //(on no users found for division query)
 //append this message to html page.
