@@ -212,6 +212,38 @@ app.get('/student',isLoggedIn, function(req, res, next)
   var messageHead= `<p>`+message+`</p>`;
 
   //write student.html here
+  
+  var studentpage = '<ul class="nav navbar-nav navbar-right">
+     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+   </ul>
+  </div>
+</nav>
+  <form action="/search" method="POST">
+   <input type="checkbox" name="colNames" value="BookISBN">ISBN<br>
+	<input type="checkbox" name="colNames" value="Publisher">Publisher<br>
+	<input type="checkbox" name="colNames" value="Title">Title<br>
+	<input type="checkbox" name="colNames" value="Author">Author<br>
+	<input type="checkbox" name="colNames" value="Genre">Genre<br>
+	
+	<br>
+    <input type="submit" name="Submit">
+  </form>
+  <form action="/checkout" method="POST">
+    <select name="mybooks" multiple>
+      //options omitted since finding books that can be checked out is something to be done in SQL
+    </select>
+    <input type="submit" name="Check Out">
+  </form>
+  <form action="/checkmein" method="POST">
+    <select name="checkinthese" mutliple>
+      //options omitted since finding books that is checked out by the user is something to be done in SQL
+    </select>
+    <input type="submit" name="Check In">
+  </form>'
+   var toServe = head+body+studentpage
+   res.write(toServe);
+   res.end();
 
 });
 
@@ -221,7 +253,37 @@ app.get('/teacher',isLoggedIn, function(req, res, next)
   var messageHead= `<p>`+message+`</p>`;
 
   //write teacher.html here
-
+  var teacherpage = '<ul class="nav navbar-nav navbar-right">
+     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+   </ul>
+  </div>
+</nav>
+  <form action="/search" method="POST">
+   <input type="checkbox" name="colNames" value="BookISBN">ISBN<br>
+	<input type="checkbox" name="colNames" value="Publisher">Publisher<br>
+	<input type="checkbox" name="colNames" value="Title">Title<br>
+	<input type="checkbox" name="colNames" value="Author">Author<br>
+	<input type="checkbox" name="colNames" value="Genre">Genre<br>
+	
+	<br>
+    <input type="submit" name="Submit">
+  </form>
+  <form action="/checkout" method="POST">
+    <select name="mybooks" multiple>
+      //options omitted since finding books that can be checked out is something to be done in SQL
+    </select>
+    <input type="submit" name="Check Out">
+  </form>
+  <form action="/checkmein" method="POST">
+    <select name="checkinthese" mutliple>
+      //options omitted since finding books that is checked out by the user is something to be done in SQL
+    </select>
+    <input type="submit" name="Check In">
+  </form>'
+   var toServe = head+body+teacherpage
+   res.write(toServe);
+   res.end();
 });
 
 app.get('/librarian',isLoggedIn, function(req, res, next)
@@ -230,6 +292,35 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
   var messageHead= `<p>`+message+`</p>`;
 
   //write librarian.html here
+  
+  var librarianpage = '<ul class="nav navbar-nav navbar-right">
+     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+   </ul>
+  <form action="/search" method="POST">
+   <input type="checkbox" name="colNames" value="BookISBN">ISBN<br>
+	<input type="checkbox" name="colNames" value="Publisher">Publisher<br>
+	<input type="checkbox" name="colNames" value="Title">Title<br>
+	<input type="checkbox" name="colNames" value="Author">Author<br>
+	<input type="checkbox" name="colNames" value="Genre">Genre<br>
+	
+	<br>
+    <input type="submit" name="Submit">
+  </form>
+  <br> <br>
+  <form action="/allcheckedout" method="GET">
+	<button type="submit" class="btn btn-default">View all checked out books</button>
+	</form>
+	<form action="/allWorkBooks" method="GET">
+	<button type="submit" class="btn btn-default">View all workbooks</button>
+	</form>
+	<form action="/allcheckouters" method="GET">
+	<button action="submit" class="btn btn-default">View users that have checked out all books</button>
+	</form>'
+   var toServe = head+body+librarianpage
+   res.write(toServe);
+   res.end();
+  
 
 });
 
