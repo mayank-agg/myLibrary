@@ -55,29 +55,11 @@
   </div>
 </nav>
   <form action="/search" method="POST">
-   <input type="checkbox" name="colNames" value="BookISBN">ISBN<br>
-	<input type="checkbox" name="colNames" value="Publisher">Publisher<br>
-	<input type="checkbox" name="colNames" value="Title">Title<br>
-	<input type="checkbox" name="colNames" value="Author">Author<br>
-	<input type="checkbox" name="colNames" value="Genre">Genre<br>
-	
-	<br>
-    <input type="submit" name="Submit">
+    <button type="submit" class="btn btn-default">View all my books</button>
   </form>
-  <form action="/checkout" method="POST">
-    <select name="mybooks" multiple>
-      //options omitted since finding books that can be checked out is something to be done in SQL
-    </select>
-    <input type="submit" name="Check Out">
-  </form>
-  <form action="/checkmein" method="POST">
-    <select name="checkinthese" mutliple>
-      //options omitted since finding books that is checked out by the user is something to be done in SQL
-    </select>
-    <input type="submit" name="Check In">
-  </form>
+  <br>
   <form action="/allWorkbooks" method="POST">
-    <input type="submit" name="Get all workbooks">
+    <button type="submit" class="btn btn-default">View all my workbooks</button>
   </form>
 </body>
 </html>
