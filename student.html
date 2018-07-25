@@ -35,24 +35,28 @@
       </li>
     </ul>
     <form class="navbar-form navbar-left" action="/search">
+      <label
+            for="name" style="color: white"> Search Books:</label> 
+      <input type="text" name="searchval">
       <div class="form-group">
-        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Search Books<span class="caret"></span></a>
+        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Parameter<span class="caret"></span></a>
          <ul class="dropdown-menu">
-           <li>ISBN:<input type="text" name="BookISBN"></a><hr></li>
-           <li>Publisher:<input type="text" name="Publisher"></a><hr></li>
-           <li>Title:<input type="text" name="Title"></a><hr></li>
-           <li>Author:<input type="text" name="Author"></a><hr></li>
-           <li>Genre:<input type="text" name="Genre"></a><hr></li>
-	   <li><button type="submit" class="btn btn-default">Submit</button></li>
+           <li>ISBN:<input type="radio" name="parameter" value="BookISBN"></a><hr></li>
+           <li>Publisher:<input type="radio" name="parameter" value="Publisher"></a><hr></li>
+           <li>Title:<input type="radio" name="parameter" value="Title" checked></a><hr></li>
+           <li>Author:<input type="radio" name="parameter" value="Author"></a><hr></li>
+           <li>Genre:<input type="radio" name="parameter" value="Genre"></a><hr></li>
+	   
           </ul>
         </li>
       </div>
+	<button type="submit" class="btn btn-default">Submit</button>
           </form>
         </ul>
         <form>
         <fieldset>
             <input type="checkbox" name="displayTitle" value="titleName" align="left" width ="50"
-            id="SearchBookTitle"
+            id="SearchBookTitle">
             <label
             for="name" style="color: white">Title</label>
 
