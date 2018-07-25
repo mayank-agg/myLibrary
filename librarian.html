@@ -37,7 +37,7 @@
     <form class="navbar-form navbar-left" action="/search">
       <div class="form-group">
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Search Books<span class="caret"></span></a>
-         <ul class="dropdown-menu"> 
+         <ul class="dropdown-menu">
            <li>ISBN:<input type="text" name="BookISBN"></a><hr></li>
            <li>Publisher:<input type="text" name="Publisher"></a><hr></li>
            <li>Title:<input type="text" name="Title"></a><hr></li>
@@ -47,6 +47,15 @@
           </ul>
         </li>
       </div>
+          </form>
+          <form>
+          <fieldset>
+              <input type="checkbox" name="displayTitle" value="titleName" align="left" width ="50"
+              id="SearchBookTitle">
+              <label
+              for="name" style="color: white">Title</label>
+
+          </fieldset>
           </form>
     <ul class="nav navbar-nav navbar-right">
      <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
