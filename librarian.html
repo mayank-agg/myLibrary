@@ -49,30 +49,22 @@
       </div>
           </form>
     <ul class="nav navbar-nav navbar-right">
-     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
+     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
    </ul>
   </div>
 </nav>
-  <form action="/search" method="POST">
-   <input type="checkbox" name="colNames" value="BookISBN">ISBN<br>
-	<input type="checkbox" name="colNames" value="Publisher">Publisher<br>
-	<input type="checkbox" name="colNames" value="Title">Title<br>
-	<input type="checkbox" name="colNames" value="Author">Author<br>
-	<input type="checkbox" name="colNames" value="Genre">Genre<br>
-	
-	<br>
-    <input type="submit" name="Submit">
-  </form>
-  <br> <br>
   <form action="/allcheckedout" method="POST">
 	<button type="submit" class="btn btn-default">View all checked out books</button>
 	</form>
+	<br>
 	<form action="/allWorkBooks" method="POST">
 	<button type="submit" class="btn btn-default">View all workbooks</button>
 	</form>
+	<br>
 	<form action="/allcheckouters" method="POST">
 	<button action="submit" class="btn btn-default">View users that have checked out all books</button>
 	</form>
+	<br>
 </body>
 </html>
