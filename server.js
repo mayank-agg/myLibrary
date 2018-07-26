@@ -70,7 +70,7 @@ function isLoggedIn(req, res, next)     //middleware
   }
   else
   {
-    req.flash('error', 'Please Login first');
+    req.flash('error', 'You are not logged in. Login to continue');
     res.redirect('/')
   }
 }
@@ -102,12 +102,10 @@ app.get('/', function(req, res, next)
 {
   var errorMessage= req.flash('error');
   var successRegister= req.flash('success');
-  var formHead= `<p>`+errorMessage+`</p>`+`<p>`+successRegister+`</p>`
+  var formHead= `<p id="messages2">`+errorMessage+`</p>`+`<p id="messages2">`+successRegister+`</p>`
   var form= `<div style="margin: 10px"><h4> Please login first </h4><br> <form action= "/loginMe" method="POST">
   <label for="userid"><b> User id: </b></label>
   <input type="text" name= "id" id= "userid"><br><br>
-  <label for="fname"><b> First Name: </b></label>
-  <input type= "text" name= "fname" id= "fname"><br><br>
   <label for="password"><b> Password: </b></label>
   <input type= "password" name= "password" id= "password"><br><br>
   <input type="submit" value="Login" id= "submit">
@@ -137,20 +135,31 @@ app.post('/loginMe', function(req, res, next)
     {
       console.log(result);
       user= result[0];
+      console.log(user)
       var mystatus= result[0].Status;
-      req.session.user= user;   //user is an object with properties: mystatus, myid, mypassword
-      console.log("user found");
-      if(mystatus== "Student")
+      req.session.user= user;   //user is an object with properties: Status, Pass, Name, UserID
+      console.log("user found, checking password");
+      var password= `${req.body.password}`;
+      if(password == result[0].Pass)
       {
-        res.redirect('/student');
-      }
-      else if(mystatus== "Teacher")
-      {
-        res.redirect('/teacher');
+        console.log("Password match, taking you in....")
+        if(mystatus== "Student")
+        {
+          res.redirect('/student');
+        }
+        else if(mystatus== "Teacher")
+        {
+          res.redirect('/teacher');
+        }
+        else
+        {
+          res.redirect('/librarian');
+        }
       }
       else
       {
-        res.redirect('/librarian');
+        req.flash('error', "Sorry, wrong password. Try again");
+        res.redirect('/');
       }
     }
   });
@@ -291,8 +300,9 @@ app.post('/addMe', function(req, res, next)
 
 app.get('/student',isLoggedIn, function(req, res, next)
 {
-  var message= req.flash('error');  //on succesfully checking in/out books.
-  var messageHead= `<p>`+message+`</p>`;
+  var message= req.flash('error');
+  var message2= req.flash('success');
+  var messageHead= `<p id="messages">`+message+message2+`</p>`;
   var studentbody = `<!DOCTYPE html>
 <html>
 <head>
@@ -305,17 +315,16 @@ app.get('/student',isLoggedIn, function(req, res, next)
 </head>
 <body>
   <nav class="navbar navbar-inverse navbar-static-top">
-  <div class="container-fluid">
+  <div class="container-fluid" id="mycontainer">
     <div class="navbar-header">
       <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
     </div>
-
     <form class="navbar-form navbar-left" action="/search" method="POST">
       <label
             for="name" style="color: white"> Search Books:</label>
       <input type="text" name="searchVal">
       <div class="form-group">
-        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Parameter<span class="caret"></span></a>
+        <li class="dropdown"><a class="dropdown-toggle" id="filterApply" data-toggle="dropdown" href="#"> Apply Filter<span class="caret"></span></a>
          <ul class="dropdown-menu">
            <li>ISBN:<input type="radio" name="dropDownVal" value="BookISBN"></a><hr></li>
            <li>Publisher:<input type="radio" name="dropDownVal" value="Publisher"></a><hr></li>
@@ -327,29 +336,85 @@ app.get('/student',isLoggedIn, function(req, res, next)
         <input type="checkbox" name="displayTitle" value="titleName" align="left" width ="50"
         id="SearchBookTitle">
         <label
-        for="name" style="color: white">Title</label>
+        for="name" id="SearchBookTitle">Title</label>
       </div>
-	<button type="submit" class="btn btn-default">Submit</button>
+	<button type="submit" id="submitButt" class="btn btn-default">Submit</button>
           </form>
         </ul>
+        <a id="updating" href="/update"> Update your Password </a>
     <ul class="nav navbar-nav navbar-right">
-     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
-     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+     <li><a href="/student"><span class="glyphicon glyphicon-user"></span> Home</a></li>
+     <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
    </ul>
   </div>
-</nav>`+messageHead+
-`</body>
-</html>`
+</nav>`+messageHead+` </body>
+</html>`;
 
   res.write(studentbody);
   res.end();
 });
 
+app.get('/update', isLoggedIn, function(req, res, next)
+{
+  //update form
+  var form= `<!DOCTYPE html>
+  <html>
+  <head>
+  <title> myLibrary | Homepage </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel= "stylesheet" href='./homepage.css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+      </div>
+      <form action="/updatePass" method="POST">
+      <input id="updateField" type=password name="newPass" placeholder="Enter new Password">
+      <button id= "updateSubmit" type="submit"> Update </button>
+      <ul class="nav navbar-nav navbar-right">
+       <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+     </ul>
+      </form>
+      </body>
+      </html>`;
+
+  res.write(form)
+  res.end();
+});
+
+app.post('/updatePass', function(req, res, next)
+{
+  var user= JSON.stringify(req.session.user);
+  var newPass= `${req.body.newPass}`;
+  var userid= req.session.user.UserID;
+  console.log(userid);
+  console.log("User before updating: "+user);
+  con.query("update users set Pass="+"'"+newPass+"'"+" where userid="+userid, function(err, result)
+  {
+    if(err)
+    {
+      console.log(err)
+    }
+    else
+    {
+      console.log("Password updated");
+      req.flash('success', "Password is updated successfully");
+      res.redirect('/student');
+    }
+  });
+});
+
 app.get('/teacher',isLoggedIn, function(req, res, next)
 {
-  var message= req.flash('error');      //on succesfully checking in/out books.
-  var messageHead= `<p>`+message+`</p>`;
-  var teacherBody= `<!DOCTYPE html>
+  var message= req.flash('error');
+  var message2= req.flash('success');
+  var messageHead= `<p id="messages">`+message+message2+`</p>`;
+  var teacherbody = `<!DOCTYPE html>
 <html>
 <head>
 <title> myLibrary | User Page </title>
@@ -361,49 +426,40 @@ app.get('/teacher',isLoggedIn, function(req, res, next)
 </head>
 <body>
   <nav class="navbar navbar-inverse navbar-static-top">
-  <div class="container-fluid">
+  <div class="container-fluid" id="mycontainer">
     <div class="navbar-header">
       <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
     </div>
-   <form class="navbar-form navbar-left" action="/search">
+    <form class="navbar-form navbar-left" action="/search" method="POST">
       <label
             for="name" style="color: white"> Search Books:</label>
       <input type="text" name="searchVal">
       <div class="form-group">
-        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Parameter<span class="caret"></span></a>
+        <li class="dropdown"><a class="dropdown-toggle" id="filterApply" data-toggle="dropdown" href="#"> Apply Filter<span class="caret"></span></a>
          <ul class="dropdown-menu">
            <li>ISBN:<input type="radio" name="dropDownVal" value="BookISBN"></a><hr></li>
            <li>Publisher:<input type="radio" name="dropDownVal" value="Publisher"></a><hr></li>
            <li>Title:<input type="radio" name="dropDownVal" value="Title" checked></a><hr></li>
            <li>Author:<input type="radio" name="dropDownVal" value="Author"></a><hr></li>
            <li>Genre:<input type="radio" name="dropDownVal" value="Genre"></a><hr></li>
-
-          </ul>
+        </ul>
         </li>
+        <input type="checkbox" name="displayTitle" value="titleName" align="left" width ="50"
+        id="SearchBookTitle">
+        <label
+        for="name" id="SearchBookTitle">Title</label>
       </div>
-	<button type="submit" class="btn btn-default">Submit</button>
+	<button type="submit" id="submitButt" class="btn btn-default">Submit</button>
           </form>
         </ul>
-        <form>
-        <fieldset>
-            <input type="checkbox" name="displayTitle" value="titleName" align="left" width ="50"
-            id="SearchBookTitle">
-            <label
-            for="name" style="color: white">Title</label>
-
-        </fieldset>
-        </form>
+        <a id="updating" href="/update"> Update your Password </a>
     <ul class="nav navbar-nav navbar-right">
-     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
-     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
-	    <li><form action="/deleteme" method="GET">
-	<button type="submit" class="btn btn-default">Delete Me</button></form></li>
+     <li><a href="/teacher"><span class="glyphicon glyphicon-user"></span> Home</a></li>
+     <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
    </ul>
   </div>
 </nav>
-  <form action="/allWorkbooks" method="POST">
-    <button type="submit" class="btn btn-default">View all my workbooks</button>
-  </form>
+    <a href="/allWorkBooks">View all my workbooks</a>`+messageHead+`
 </body>
 </html>`
   res.write(teacherBody);
@@ -412,8 +468,9 @@ app.get('/teacher',isLoggedIn, function(req, res, next)
 
 app.get('/librarian',isLoggedIn, function(req, res, next)
 {
-  var message= req.flash('error');    //(on no users found for division query)
-  var messageHead= `<p>`+message+`</p>`;
+  var message= req.flash('error');
+  var message2= req.flash('success');
+  var messageHead= `<p id="messages">`+message+message2+`</p>`;
   var librarianBody= `<!DOCTYPE html>
 <html>
 <head>
@@ -430,17 +487,18 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
     <div class="navbar-header">
       <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
     </div>
+    <a id="updating" href="/update"> Update your Password </a>
     <ul class="nav navbar-nav navbar-right">
-     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
-     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+     <li><a href="/librarian"><span class="glyphicon glyphicon-user"></span> Home</a></li>
+     <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
    </ul>
   </div>
 </nav>
 	<br>
-	<a href="/allWorkBooks">View all workbooks</a>
+	<a id="viewWorkBooks" href="/allWorkBooks">View all workbooks</a>
 	<br>
-	<a href="/allCheckedOut">View users that have checked out all books</a>
-	<br>
+	<a id="viewCheck" href="/allCheckedOut">View users that have checked out all books</a>
+	<br>`+messageHead+`
 </body>
 </html>`
   res.write(librarianBody);
@@ -454,7 +512,9 @@ var endTable;
 
 app.post('/search',isLoggedIn, function(req, res, next)
 {
-  console.log("Inside post request search")
+  console.log("Inside post request search");
+  var stat= req.session.user.Status;
+  console.log("Status: "+stat);
   var searchedFor= `${req.body.searchVal}`;
   var dropDownVal= `${req.body.dropDownVal}`;
   console.log(dropDownVal);
@@ -478,8 +538,7 @@ app.post('/search',isLoggedIn, function(req, res, next)
       <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
     </div>
     <ul class="nav navbar-nav navbar-right">
-     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
-     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+     <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
    </ul>
   </div>
 </nav>`
@@ -500,7 +559,7 @@ app.post('/search',isLoggedIn, function(req, res, next)
       {
         console.log("book found");
         console.log(result);
-        allAttributes= `<table style="width:100%">
+        allAttributes= `<table id="bookTable">
         <tr>
        <th>Title</th>
         </tr>`;
@@ -515,9 +574,24 @@ app.post('/search',isLoggedIn, function(req, res, next)
       }
       else
       {
-        console.log("Book not found");
-        req.flash('error', "Sorry, the book is not available.");
-        res.redirect('/student')
+        if(stat == "Student")
+        {
+          console.log("Book not found by student")
+          req.flash('error'," The requested book is out of stock. Please try for a different one. ");
+          res.redirect('/student')
+        }
+        else if(stat == "Teacher")
+        {
+          console.log("Book not found by teacher")
+          req.flash('error',"The requested book is out of stock. Please try for a different one. ");
+          res.redirect('/teacher');
+        }
+        else
+        {
+          console.log("Book not found by librarian")
+          req.flash('error',"The requested book is out of stock. Please try for a different one.  ");
+          res.redirect('/librarian');
+        }
       }
     }
     });
@@ -537,7 +611,7 @@ app.post('/search',isLoggedIn, function(req, res, next)
         {
           console.log("book found");
           console.log(result);
-          allAttributes= `<table style="width:100%">
+          allAttributes= `<table id="bookTable">
 		      <tr>
          <th>BookISBN</th>
 			   <th>Title</th>
@@ -556,17 +630,32 @@ app.post('/search',isLoggedIn, function(req, res, next)
 		       </tr>`
          }
 	         endTable= `</table>`
-           req.flash('error', "Sorry, the book is not available.");
            res.redirect('/newSearch');
         }
         else
         {
-          console.log("Book not found");
-          res.redirect('/student')
+          if(stat == "Student")
+          {
+            console.log("Book not found by student")
+            req.flash('error',"The requested book is out of stock. Please try for a different one. ");
+            res.redirect('/student');
+          }
+          else if(stat == "Teacher")
+          {
+            console.log("Book not found by teacher")
+            req.flash('error',"The requested book is out of stock. Please try for a different one.  ");
+            res.redirect('/teacher');
+          }
+          else
+          {
+            console.log("Book not found by librarian")
+            req.flash('error',"The requested book is out of stock. Please try for a different one. ");
+            res.redirect('/librarian');
+          }
         }
       }
-      });
-    }
+    });
+  }
 });
 
 app.get('/newSearch',isLoggedIn, function(req, res, next)
@@ -578,7 +667,7 @@ app.get('/newSearch',isLoggedIn, function(req, res, next)
 
 app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
 {
-  var searchedResults;   //take the results and append them to html.
+ //take the results and append them to html.
   //3) db query: Join- select * from checkedOutBooks (if such a table exists) (join with students, teachers) (using id as joiining condition (present in all the tables))
   con.query("select * from checkout_books c, users u where c.userid = u.userid", function(err, result)
   {
@@ -599,8 +688,7 @@ app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
         <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
       </div>
       <ul class="nav navbar-nav navbar-right">
-       <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
-       <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+       <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
      </ul>
     </div>
   </nav>`
@@ -710,21 +798,17 @@ app.get('/myworkbooks', isLoggedIn, function(req, res, next)
   res.end();
 });
 
-var resultpage;
+app.get('/logout', isLoggedIn, function(req, res, next)
+{
+  req.session.regenerate(function(err)
+  {
+    req.flash('success', `Succesfully logged out.`);
+    res.redirect('/');
+  });
+});
 app.get('/allcheckouters', isLoggedIn, function(req, res, next)
 {
-	con.query("select UserID, Name From Users U Where Not Exists (((select BookISBN from Checkout_Books) Except (select BookISBN from Checkout_Books B Where B.UserID=U.UserID)) Union ((select BookISBN from Checkout_Textbooks) Except (select BookISBN from Checkout_Textbooks T Where T.UserID = U.UserID)))", function(err,result)){
   //var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
-	if (err) {
-		console.log(err);
-	}
-	else {
-		if (result.length != 0) {
-			console.log("Division successful");
-			console.log(result);
-			resultpage = `User that has used all books:` //note this is incomplete
-		}
-	}
   if(allUsers > 0)
   {
   //  var htmlpage= append the user to html and serve the page.
@@ -737,5 +821,4 @@ app.get('/allcheckouters', isLoggedIn, function(req, res, next)
     req.flash('error', "No such users found");
     res.redirect('/librarian')
   }
-	});
 });
