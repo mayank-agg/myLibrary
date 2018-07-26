@@ -6,3 +6,94 @@ hr {
   padding: 0px;
   margin: 0px;
 }
+#updating {
+  color: black;
+  font-size: 15px;
+  text-decoration: none;
+  position: absolute;
+  top: 80px;
+  left: 5px;
+}
+#viewWorkBooks {
+  color: black;
+  font-size: 15px;
+  text-decoration: none;
+  position: absolute;
+  top: 100px;
+  left: 5px;
+}
+#viewCheck {
+  color: black;
+  font-size: 15px;
+  text-decoration: none;
+  position: absolute;
+  top: 120px;
+  left: 5px;
+}
+#updating:hover {
+  color: navy;
+  text-decoration: underline;
+}
+
+#viewCheck:hover {
+  color: navy;
+  text-decoration: underline;
+}
+
+#viewWorkBooks:hover {
+  color: navy;
+  text-decoration: underline;
+}
+.form-group {
+  margin: 10px;
+  top: 120px;
+}
+#submitButt {
+  position: absolute;
+  left: 46%;
+  top: 15px;
+  color: black;
+}
+#filterApply {
+  position: relative;
+  left: 50px;
+  top: 10px;
+  color: white;
+}
+#SearchBookTitle {
+  position: relative;
+  top:-12px;
+  color: white;
+}
+#mycontainer {
+  padding: 0px;
+}
+#updateField {
+  position: absolute;
+  top: 70px;
+  left: 5px;
+}
+#updateSubmit {
+  position: absolute;
+  top: 115px;
+  left: 5px;
+}
+#messages {
+  position: absolute;
+  top: 115px;
+  left: 5px;
+  color: red;
+}
+#bookTable {
+  border: 2px solid black;
+  width: 100%
+}
+tr {
+  border: 1px solid black;
+}
+#messages2 {
+  position: absolute;
+  top: 100px;
+  left: 5px;
+  color: red;
+}
