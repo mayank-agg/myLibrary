@@ -221,10 +221,6 @@ app.post('/addMe', function(req, res, next)
   var fname= `${req.body.fname}`;
   var valueid= `${req.body.id}`;
   var valuePass= `${req.body.password}`;
-  var found;
-
-  //search for valueid in database.
-  //db query- var found= search valueid in db (count)
   con.query("select * from users where userid="+valueid, function(err, result)
   {
     if(err)
@@ -242,13 +238,10 @@ app.post('/addMe', function(req, res, next)
       else
       {
         var stat= `${req.body.status}`;
-        if(stat== "Student")
+        con.query('insert into users values('+valueid+','+'"'+fname+'"'+','+'"'+valuePass+'"'+","+'"'+stat+'"'+')', function(err, result2)
         {
-        //db query- insert into student table
-          con.query('insert into users values('+valueid+','+'"'+fname+'"'+','+'"'+valuePass+'"'+","+'"'+stat+'"'+')', function(err, result2)
-          {
             if(err) {
-              console.log("I AM AN ERROR"+err)
+              console.log(err)
             }
             else
             {
@@ -257,47 +250,11 @@ app.post('/addMe', function(req, res, next)
             }
             req.flash('success', 'Thank you for registering. Please login');
             res.redirect('/');
-          });
-        }
-        else if(stat=="Teacher")
-        {
-        //db query- insert into teacher table
-          con.query('insert into users values('+valueid+','+'"'+fname+'"'+','+'"'+valuePass+'"'+","+'"'+stat+'"'+')', function(err, result2)
-          {
-            if(err) {
-              console.log(err)
-            }
-            else
-            {
-              console.log(result2)
-              console.log("Teacher");
-            }
-            req.flash('success', 'Thank you for registering. Please login');
-            res.redirect('/');
-          });
-        }
-        else
-        {
-        //db query- insert into Librarian table.
-          con.query('insert into users values('+valueid+','+'"'+fname+'"'+','+'"'+valuePass+'"'+","+'"'+stat+'"'+')', function(err, result2)
-          {
-            if(err) {
-              console.log(err)
-            }
-            else
-            {
-              console.log(result2)
-              console.log("Librarian");
-            }
-            req.flash('success', 'Thank you for registering. Please login');
-            res.redirect('/');
-          });
-        }
-      }
-    }
-  });
+        });
+       }
+     }
+   });
 });
-
 app.get('/student',isLoggedIn, function(req, res, next)
 {
   var getName= req.session.user.Name;
