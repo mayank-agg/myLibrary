@@ -262,7 +262,7 @@ app.post('/addMe', function(req, res, next)
         else if(stat=="Teacher")
         {
         //db query- insert into teacher table
-          con.query("insert into users values("+valueid+","+fname+","+valuePass+","+stat+")", function(err, result2)
+          con.query('insert into users values('+valueid+','+'"'+fname+'"'+','+'"'+valuePass+'"'+","+'"'+stat+'"'+')', function(err, result2)
           {
             if(err) {
               console.log(err)
@@ -279,7 +279,7 @@ app.post('/addMe', function(req, res, next)
         else
         {
         //db query- insert into Librarian table.
-          con.query("insert into users values("+valueid+","+fname+","+valuePass+","+stat+")", function(err, result2)
+          con.query('insert into users values('+valueid+','+'"'+fname+'"'+','+'"'+valuePass+'"'+","+'"'+stat+'"'+')', function(err, result2)
           {
             if(err) {
               console.log(err)
@@ -300,6 +300,8 @@ app.post('/addMe', function(req, res, next)
 
 app.get('/student',isLoggedIn, function(req, res, next)
 {
+  var getName= req.session.user.Name;
+  var welcomeMessage= `<h4 id="welcomeMessage2"> Welcome `+getName+`!`;
   var message= req.flash('error');
   var message2= req.flash('success');
   var messageHead= `<p id="messages">`+message+message2+`</p>`;
@@ -341,12 +343,11 @@ app.get('/student',isLoggedIn, function(req, res, next)
 	<button type="submit" id="submitButt" class="btn btn-default">Submit</button>
           </form>
         </ul>
-        <a id="updating" href="/update"> Update your Password </a>
     <ul class="nav navbar-nav navbar-right">
      <li><a href="/student"><span class="glyphicon glyphicon-user"></span> Home</a></li>
      <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
    </ul>
-  </div>
+  </div>`+welcomeMessage+` <a id="updatingt" href="/update"> Update your Password </a>
 </nav>`+messageHead+` </body>
 </html>`;
 
@@ -392,6 +393,7 @@ app.post('/updatePass', function(req, res, next)
   var user= JSON.stringify(req.session.user);
   var newPass= `${req.body.newPass}`;
   var userid= req.session.user.UserID;
+  var st= req.session.user.Status
   console.log(userid);
   console.log("User before updating: "+user);
   con.query("update users set Pass="+"'"+newPass+"'"+" where userid="+userid, function(err, result)
@@ -404,13 +406,26 @@ app.post('/updatePass', function(req, res, next)
     {
       console.log("Password updated");
       req.flash('success', "Password is updated successfully");
-      res.redirect('/student');
+      if(st == "Student")
+      {
+        res.redirect('/student');
+      }
+      else if(st == "Teacher")
+      {
+        res.redirect('/teacher');
+      }
+      else
+      {
+        res.redirect('/librarian');
+      }
     }
   });
 });
 
 app.get('/teacher',isLoggedIn, function(req, res, next)
 {
+  var getName= req.session.user.Name;
+  var welcomeMessage= `<h4 id="welcomeMessage2"> Welcome `+getName+`!`;
   var message= req.flash('error');
   var message2= req.flash('success');
   var messageHead= `<p id="messages">`+message+message2+`</p>`;
@@ -452,25 +467,26 @@ app.get('/teacher',isLoggedIn, function(req, res, next)
 	<button type="submit" id="submitButt" class="btn btn-default">Submit</button>
           </form>
         </ul>
-        <a id="updating" href="/update"> Update your Password </a>
     <ul class="nav navbar-nav navbar-right">
      <li><a href="/teacher"><span class="glyphicon glyphicon-user"></span> Home</a></li>
      <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
    </ul>
   </div>
-</nav>
-    <a href="/allWorkBooks">View all my workbooks</a>`+messageHead+`
+</nav>`+welcomeMessage+ `<a id="updatingt" href="/update"> Update your Password </a><br>
+    <a id="dispWork" href="/allWorkBooks">View all my workbooks</a>`+messageHead+`
 </body>
 </html>`
-  res.write(teacherBody);
+  res.write(teacherbody);
   res.end();
 });
 
 app.get('/librarian',isLoggedIn, function(req, res, next)
 {
+  var getName= req.session.user.Name;
+  var welcomeMessage= `<h4 id="welcomeMessage"> Welcome `+getName+`! Please choose from the following: `;
   var message= req.flash('error');
   var message2= req.flash('success');
-  var messageHead= `<p id="messages">`+message+message2+`</p>`;
+  var messageHead= `<p id="messages3">`+message+message2+`</p>`;
   var librarianBody= `<!DOCTYPE html>
 <html>
 <head>
@@ -481,19 +497,19 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
-<body>
-  <nav class="navbar navbar-inverse navbar-static-top">
+<body> <nav class="navbar navbar-inverse navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
     </div>
-    <a id="updating" href="/update"> Update your Password </a>
     <ul class="nav navbar-nav navbar-right">
      <li><a href="/librarian"><span class="glyphicon glyphicon-user"></span> Home</a></li>
      <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
    </ul>
   </div>
-</nav>
+</nav>`+welcomeMessage+`
+<br>
+  <a id="updating" href="/update"> Update your Password </a>
 	<br>
 	<a id="viewWorkBooks" href="/allWorkBooks">View all workbooks</a>
 	<br>
@@ -598,7 +614,7 @@ app.post('/search',isLoggedIn, function(req, res, next)
   }
   else
   {
-    console.log("Searching for the book")
+    //user has asked for all columns.
     con.query("select * from checkout_books where quantity > 0 and "+dropDownVal+"="+"'"+searchedFor+"'", function(err, result)
     {
       if(err)
@@ -725,7 +741,7 @@ app.get('/allWorkBooks', isLoggedIn, function(req, res, next)
 {
   //db query: select * from workbooks
   //take the result and write into html and then return that file.
-})
+});
 
 app.post('/checkout',isLoggedIn, function(req, res, next)
 {
