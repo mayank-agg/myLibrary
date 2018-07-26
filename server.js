@@ -126,23 +126,18 @@ app.post('/loginMe', function(req, res, next)
   var user= null;
   //users table: 3 tables with 2 columns each. : Student(Id, Passowrd), Teacher(id, password), Librarian(ID, password)
   var myid= `${req.body.id}`;
-  //select from the mystatus table
-//  db query- initialize user with person with given credentials= select * from mystatus where id= myid. (find user with the id and then take the full tuple and initialize user with that tuple.)
   con.query("select * from users where userid="+myid, function(err, result)
   {
-    var resultArr= result;      //an array of users. 
-    console.log(result);
-    user= result[0];
-    var mystatus= result[0].Status;
-    if(user == null)   //id doesnt exist.
+    if(result.length ==0)
     {
-      //send them back to login.
       req.flash('error', 'No user found. Please register. ');
       res.redirect('/');     //make a get request to login.
     }
-    else    //user found
+    else
     {
-      //serve status oriented html page.
+      console.log(result);
+      user= result[0];
+      var mystatus= result[0].Status;
       req.session.user= user;   //user is an object with properties: mystatus, myid, mypassword
       console.log("user found");
       if(mystatus== "Student")
@@ -164,10 +159,49 @@ app.post('/loginMe', function(req, res, next)
 //user wants to sign up.
 app.get('/register', function(req, res, next)
 {
-  var idExists= req.flash('error');
-  var newForm= `Name: <br><input type="text" name="fname"><br>ID:<br><input type="text" name="ID"<br>Role:<br><input type="radio" name="status" value="student" checked> Student <br><input type="radio" name="status" value="teacher"> Teacher <br><input type="radio" name="status" value="librarian"> Librarian <br>Password:<br><input type="password" name="password"><br><br><input type="submit" value="Submit">` //write register form here. (Action= addMe)
-  var toServe= head+`<p id="error" style="color: red">`+usernameExists+`</p>`+body+newForm
-  res.write(toServe);
+  var usernameExists= req.flash('error');
+  console.log(usernameExists)
+  var file= `<!DOCTYPE html>
+  <html>
+  <head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel= "stylesheet" href='./homepage.css'>
+  </head>
+  <body>
+      <nav class="navbar navbar-inverse navbar-static-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+         <li><a href="/signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+       </ul>
+       </nav>
+  <div class="container">
+    <div class="signup-content">
+      <h2> Sign Up</h2>
+      <form action= "/addMe" method="post">
+      <p style="color: red">`+usernameExists+`</p>
+  	     Name: <br>
+  	      <input type="text" name="fname"><br>
+          Userid: <br>
+          <input name="id" type="text"><br>
+  	       Role: <br>
+  	        <input type="radio" name="status" value="Student" checked> Student <br>
+  	        <input type="radio" name="status" value="Teacher"> Teacher <br>
+  	        <input type="radio" name="status" value="Librarian"> Librarian <br>
+  	        Password: <br>
+  	       <input type="password" name="password"><br>
+  	       <br>
+  	       <input type="submit" value="Submit"><br>
+           <a href="/"> Go Home </a>
+      </form>
+    </div>
+  </div>
+
+  </body>
+  </html>`
+  res.write(file);
   res.end();
 });
 
@@ -176,50 +210,149 @@ app.post('/addMe', function(req, res, next)
 {
   //add id, password to appropriate status table. Ex: if status= "teacher", add id, password, fname to teacher table.
   var fname= `${req.body.fname}`;
-  var valueId= `${req.body.id}`;
+  var valueid= `${req.body.id}`;
   var valuePass= `${req.body.password}`;
+  var found;
 
   //search for valueid in database.
   //db query- var found= search valueid in db (count)
-  if(found > 0)
+  con.query("select * from users where userid="+valueid, function(err, result)
   {
-    req.flash('This ID is talen. Please choose a different one. ');
-    res.redirect('/register');
-  }
-  else
-  {
-    var stat= `${req.body.status}`;
-    if(stat== "Student")
+    if(err)
     {
-      //db query- insert into student table
-    }
-    else if(stat=="Teacher")
-    {
-      //db query- insert into teacher table
+      console.log(err)
     }
     else
     {
-      //db query- insert into Librarian table.
+      console.log(result);
+      if(result.length > 0)
+      {
+        req.flash('error', 'This ID is talen. Please choose a different one. ');
+        res.redirect('/register');
+      }
+      else
+      {
+        var stat= `${req.body.status}`;
+        if(stat== "Student")
+        {
+        //db query- insert into student table
+          con.query('insert into users values('+valueid+','+'"'+fname+'"'+','+'"'+valuePass+'"'+","+'"'+stat+'"'+')', function(err, result2)
+          {
+            if(err) {
+              console.log("I AM AN ERROR"+err)
+            }
+            else
+            {
+              console.log(result2)
+              console.log("Student");
+            }
+            req.flash('success', 'Thank you for registering. Please login');
+            res.redirect('/');
+          });
+        }
+        else if(stat=="Teacher")
+        {
+        //db query- insert into teacher table
+          con.query("insert into users values("+valueid+","+fname+","+valuePass+","+stat+")", function(err, result2)
+          {
+            if(err) {
+              console.log(err)
+            }
+            else
+            {
+              console.log(result2)
+              console.log("Teacher");
+            }
+            req.flash('success', 'Thank you for registering. Please login');
+            res.redirect('/');
+          });
+        }
+        else
+        {
+        //db query- insert into Librarian table.
+          con.query("insert into users values("+valueid+","+fname+","+valuePass+","+stat+")", function(err, result2)
+          {
+            if(err) {
+              console.log(err)
+            }
+            else
+            {
+              console.log(result2)
+              console.log("Librarian");
+            }
+            req.flash('success', 'Thank you for registering. Please login');
+            res.redirect('/');
+          });
+        }
+      }
     }
-    req.flash('success', 'Thank you for registering. Please login');
-    res.redirect('/');
-  }
+  });
 });
 
 app.get('/student',isLoggedIn, function(req, res, next)
 {
-  var message= req.flash('success');  //on succesfully checking in/out books.
+  var message= req.flash('error');  //on succesfully checking in/out books.
   var messageHead= `<p>`+message+`</p>`;
+  var studentbody = `<!DOCTYPE html>
+<html>
+<head>
+<title> myLibrary | User Page </title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel= "stylesheet" href='./homepage.css'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-inverse navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+    </div>
 
-  //write student.html here
+    <form class="navbar-form navbar-left" action="/search" method="POST">
+      <label
+            for="name" style="color: white"> Search Books:</label>
+      <input type="text" name="searchVal">
+      <div class="form-group">
+        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Parameter<span class="caret"></span></a>
+         <ul class="dropdown-menu">
+           <li>ISBN:<input type="radio" name="dropDownVal" value="BookISBN"></a><hr></li>
+           <li>Publisher:<input type="radio" name="dropDownVal" value="Publisher"></a><hr></li>
+           <li>Title:<input type="radio" name="dropDownVal" value="Title" checked></a><hr></li>
+           <li>Author:<input type="radio" name="dropDownVal" value="Author"></a><hr></li>
+           <li>Genre:<input type="radio" name="dropDownVal" value="Genre"></a><hr></li>
+        </ul>
+        </li>
+        <input type="checkbox" name="displayTitle" value="titleName" align="left" width ="50"
+        id="SearchBookTitle">
+        <label
+        for="name" style="color: white">Title</label>
+      </div>
+	<button type="submit" class="btn btn-default">Submit</button>
+          </form>
+        </ul>
+    <ul class="nav navbar-nav navbar-right">
+     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
+     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+   </ul>
+  </div>
+</nav>`+messageHead+
+`</body>
+</html>`
 
+  res.write(studentbody);
+  res.end();
 });
 
 app.get('/teacher',isLoggedIn, function(req, res, next)
 {
-  var message= req.flash('success');      //on succesfully checking in/out books.
+  var message= req.flash('error');      //on succesfully checking in/out books.
   var messageHead= `<p>`+message+`</p>`;
 
+
+  res.write(toServe);
+  res.end();
   //write teacher.html here
 
 });
@@ -229,32 +362,139 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
   var message= req.flash('error');    //(on no users found for division query)
   var messageHead= `<p>`+message+`</p>`;
 
+  res.write(toServe);
+  res.end();
   //write librarian.html here
 
 });
 
+var resultsPage;
+var allAttributes;
+var rows;
+var endTable;
+
 app.post('/search',isLoggedIn, function(req, res, next)
 {
+  console.log("Inside post request search")
   var searchedFor= `${req.body.searchVal}`;
   var dropDownVal= `${req.body.dropDownVal}`;
-  var colArray= `${req.body.colNames}`;     //all columns to be displayed
-  var searchedResults;      //INITIALIZED IN THE NEXT STEP.
-
-  if(colArray== [])
+  console.log(dropDownVal);
+  console.log(searchedFor);
+  var displayTitleStat= `${req.body.displayTitle}`
+  rows;
+  resultsPage= `<!DOCTYPE html>
+<html>
+<head>
+<title> myLibrary | User Page </title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel= "stylesheet" href='./homepage.css'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-inverse navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
+     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+   </ul>
+  </div>
+</nav>`
+  if(displayTitleStat=="titleName")
   {
     //NOTE: In all the cases, just display those books whose count != 0. (that is they have not been checked out)
   //2) db query: Selection query- select * from books where dropDownVal (column ex: Author)= searchedFor (value of that column)
   //take the results and append them to html.
+  con.query("select title from checkout_books where quantity > 0 and "+dropDownVal+"="+"'"+searchedFor+"'", function(err, result)
+  {
+    if(err)
+    {
+      console.log(err)
+    }
+    else
+    {
+      if(result.length != 0)
+      {
+        console.log("book found");
+        console.log(result);
+        allAttributes= `<table style="width:100%">
+        <tr>
+       <th>Title</th>
+        </tr>`;
+       for(var l=0; l<result.length; l++)
+       {
+         rows+= `<tr>
+         <td>`+result[l].title+`</td>
+         </tr>`
+       }
+        endTable= `</table>`
+        res.redirect('/newSearch');
+      }
+      else
+      {
+        console.log("Book not found");
+        req.flash('error', "Sorry, the book is not available.");
+        res.redirect('/student')
+      }
+    }
+    });
   }
   else
   {
-    //1) db query: Projection query- select colNames from books where dropDownVal (column ex: Author)= searchedFor (value of that column)
-    ////take the results and append them to html.
-  }
-  //Now, add one check-out button and a selection box against each search result. Clicking on check-out would send the names of the books to be checked out by users. This is a form with action= '/checkout'
-  var toServe= head + body + searchedResults;
-  res.write(toServe);
-  res.end();
+    console.log("Searching for the book")
+    con.query("select * from checkout_books where quantity > 0 and "+dropDownVal+"="+"'"+searchedFor+"'", function(err, result)
+    {
+      if(err)
+      {
+        console.log(err)
+      }
+      else
+      {
+        if(result.length != 0)
+        {
+          console.log("book found");
+          console.log(result);
+          allAttributes= `<table style="width:100%">
+		      <tr>
+         <th>BookISBN</th>
+			   <th>Title</th>
+			    <th>Genre</th>
+			   <th>Author</th>
+			  <th>Publisher</th>
+		     </tr>`;
+         for(var t=0; t<result.length; t++)
+         {
+           rows+= `<tr>
+			     <td>`+result[t].BookISBN+`</td>
+           <td>`+result[t].Title+`</td>
+           <td>`+result[t].Genre+`</td>
+           <td>`+result[t].Author+`</td>
+           <td>`+result[t].Publisher+`</td>
+		       </tr>`
+         }
+	         endTable= `</table>`
+           req.flash('error', "Sorry, the book is not available.");
+           res.redirect('/newSearch');
+        }
+        else
+        {
+          console.log("Book not found");
+          res.redirect('/student')
+        }
+      }
+      });
+    }
+});
+
+app.get('/newSearch',isLoggedIn, function(req, res, next)
+{
+  var toServe= resultsPage+allAttributes+rows+endTable;
+  res.write(toServe)
+  res.end()
 });
 
 app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
