@@ -14,38 +14,19 @@
     <div class="navbar-header">
       <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
     </div>
-    <ul class="nav navbar-nav">
-      <li><a href="#">Home</a></li>
-      <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Browse<span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          <li><a href="#">Science</a><hr></li>
-          <li><a href="#">Biographies</a><hr></li>
-          <li><a href="#">Textbooks</a><hr></li>
-          <li><a href="#">Sci-fi</a><hr></li>
-          <li><a href="#">Fantasy</a></li>
-        </ul>
-      </li>
-      <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">My Books<span class="caret"></span></a>
-      <ul class="dropdown-menu">
-          <li><a href="#">My Lists</a><hr></li>
-          <li><a href="#">My Reading Logs</a><hr></li>
-          <li><a href="#">My Loans</a></li>
-        </ul>
-      </li>
-    </ul>
+   
     <form class="navbar-form navbar-left" action="/search">
       <label
             for="name" style="color: white"> Search Books:</label> 
-      <input type="text" name="searchval">
+      <input type="text" name="searchVal">
       <div class="form-group">
         <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Parameter<span class="caret"></span></a>
          <ul class="dropdown-menu">
-           <li>ISBN:<input type="radio" name="parameter" value="BookISBN"></a><hr></li>
-           <li>Publisher:<input type="radio" name="parameter" value="Publisher"></a><hr></li>
-           <li>Title:<input type="radio" name="parameter" value="Title" checked></a><hr></li>
-           <li>Author:<input type="radio" name="parameter" value="Author"></a><hr></li>
-           <li>Genre:<input type="radio" name="parameter" value="Genre"></a><hr></li>
+           <li>ISBN:<input type="radio" name="dropDownVal" value="BookISBN"></a><hr></li>
+           <li>Publisher:<input type="radio" name="dropDownVal" value="Publisher"></a><hr></li>
+           <li>Title:<input type="radio" name="dropDownVal" value="Title" checked></a><hr></li>
+           <li>Author:<input type="radio" name="dropDownVal" value="Author"></a><hr></li>
+           <li>Genre:<input type="radio" name="dropDownVal" value="Genre"></a><hr></li>
 	   
           </ul>
         </li>
