@@ -349,23 +349,102 @@ app.get('/teacher',isLoggedIn, function(req, res, next)
 {
   var message= req.flash('error');      //on succesfully checking in/out books.
   var messageHead= `<p>`+message+`</p>`;
+  var teacherBody= `<!DOCTYPE html>
+<html>
+<head>
+<title> myLibrary | User Page </title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel= "stylesheet" href='./homepage.css'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-inverse navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+    </div>
+   <form class="navbar-form navbar-left" action="/search">
+      <label
+            for="name" style="color: white"> Search Books:</label>
+      <input type="text" name="searchVal">
+      <div class="form-group">
+        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Parameter<span class="caret"></span></a>
+         <ul class="dropdown-menu">
+           <li>ISBN:<input type="radio" name="dropDownVal" value="BookISBN"></a><hr></li>
+           <li>Publisher:<input type="radio" name="dropDownVal" value="Publisher"></a><hr></li>
+           <li>Title:<input type="radio" name="dropDownVal" value="Title" checked></a><hr></li>
+           <li>Author:<input type="radio" name="dropDownVal" value="Author"></a><hr></li>
+           <li>Genre:<input type="radio" name="dropDownVal" value="Genre"></a><hr></li>
 
+          </ul>
+        </li>
+      </div>
+	<button type="submit" class="btn btn-default">Submit</button>
+          </form>
+        </ul>
+        <form>
+        <fieldset>
+            <input type="checkbox" name="displayTitle" value="titleName" align="left" width ="50"
+            id="SearchBookTitle">
+            <label
+            for="name" style="color: white">Title</label>
 
-  res.write(toServe);
+        </fieldset>
+        </form>
+    <ul class="nav navbar-nav navbar-right">
+     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
+     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+	    <li><form action="/deleteme" method="GET">
+	<button type="submit" class="btn btn-default">Delete Me</button></form></li>
+   </ul>
+  </div>
+</nav>
+  <form action="/allWorkbooks" method="POST">
+    <button type="submit" class="btn btn-default">View all my workbooks</button>
+  </form>
+</body>
+</html>`
+  res.write(teacherBody);
   res.end();
-  //write teacher.html here
-
 });
 
 app.get('/librarian',isLoggedIn, function(req, res, next)
 {
   var message= req.flash('error');    //(on no users found for division query)
   var messageHead= `<p>`+message+`</p>`;
-
-  res.write(toServe);
+  var librarianBody= `<!DOCTYPE html>
+<html>
+<head>
+<title> myLibrary | Librarian Page </title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel= "stylesheet" href='./homepage.css'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-inverse navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
+     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+   </ul>
+  </div>
+</nav>
+	<br>
+	<a href="/allWorkBooks">View all workbooks</a>
+	<br>
+	<a href="/allCheckedOut">View users that have checked out all books</a>
+	<br>
+</body>
+</html>`
+  res.write(librarianBody);
   res.end();
-  //write librarian.html here
-
 });
 
 var resultsPage;
@@ -501,9 +580,57 @@ app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
 {
   var searchedResults;   //take the results and append them to html.
   //3) db query: Join- select * from checkedOutBooks (if such a table exists) (join with students, teachers) (using id as joiining condition (present in all the tables))
-  var toServe= head + body + searchedResults;
-  res.write(toServe);
-  res.end();
+  con.query("select * from checkout_books c, users u where c.userid = u.userid", function(err, result)
+  {
+  var resultsPage2= `<!DOCTYPE html>
+  <html>
+  <head>
+  <title> myLibrary | User Page </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel= "stylesheet" href='./homepage.css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+       <li><a href="#"><span class="glyphicon glyphicon-user"></span> Home</a></li>
+       <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+     </ul>
+    </div>
+  </nav>`
+  var allAttributes2= `<table style:"width=100%">
+	<tr>
+		<th>BookISBN</th>
+		<th>Title</th>
+		<th>Publisher</th>
+		<th>Author</th>
+		<th>Genre</th>
+		<th>UserID</th>
+		<th>FirstName</th>
+	  </tr>`;
+    var rows2;
+    for(var k=0; k<result.length; k++)
+    {
+      rows2+= `<tr>
+      <td>`+result[k].BookISBN+`</td>
+      <td>`+result[k].Title+`</td>
+      <td>`+result[k].Genre+`</td>
+      <td>`+result[k].Author+`</td>
+      <td>`+result[k].Publisher+`</td>
+      <td>`+result[k].UserID+`</td>
+      <td>`+result[k].Name+`</td>
+      </tr>`
+    }
+      var endTable2= `</table>`
+      res.write(resultsPage2+allAttributes2+rows2+endTable2);
+      res.end()
+  });
 });
 
 app.get('/allWorkBooks', isLoggedIn, function(req, res, next)
