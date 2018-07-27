@@ -222,7 +222,7 @@ app.post('/addMe', function(req, res, next)
   var fname= `${req.body.fname}`;
   var valueid= `${req.body.id}`;
   var valuePass= `${req.body.password}`;
-  con.query("select * from users where UserID="+valueid, function(err, result)
+  con.query("select * from Users where UserID="+valueid, function(err, result)
   {
     if(err)
     {
@@ -239,7 +239,7 @@ app.post('/addMe', function(req, res, next)
       else
       {
         var stat= `${req.body.status}`;
-        con.query('insert into users values('+valueid+','+'"'+fname+'"'+','+'"'+valuePass+'"'+","+'"'+stat+'"'+')', function(err, result2)
+        con.query('insert into Users values('+valueid+','+'"'+fname+'"'+','+'"'+valuePass+'"'+","+'"'+stat+'"'+')', function(err, result2)
         {
             if(err) {
               console.log(err)
@@ -676,7 +676,6 @@ app.get ('/allUsers', isLoggedIn, function(req, res, next)
 		<th>UserID</th>
 		<th>Name</th>
 		<th>Status</th>
-    <th>Delete User?</th>
 	  </tr>`;
     var rows2;
     for(var k=0; k<result.length; k++)
@@ -685,12 +684,37 @@ app.get ('/allUsers', isLoggedIn, function(req, res, next)
       <td>`+result[k].UserID+`</td>
       <td>`+result[k].Name+`</td>
       <td>`+result[k].Status+`</td>
-      <td><a href=con.query("DELETE FROM Users WHERE UserID="+result[k].UserID, function(err, result4){});</a></td>
       </tr>`
     }
       var endTable2= `</table>`
-      res.write(resultsPage2+allAttributes2+rows2+endTable2);
+      var deleteform=`
+      <br>
+      Delete User?
+      <form action = "/deleteUser" method="post">
+      Enter UserID:
+      <br>
+      <input type="text" name="deluserid"
+      <br>
+      <input type="submit" value="Submit">
+      <br>
+      </form>`
+      res.write(resultsPage2+allAttributes2+rows2+endTable2+deleteform);
       res.end()
+  });
+});
+
+app.post('/deleteUser', function(req,res,next){
+  var deluserid = `${req.body.deluserid}`;
+  con.query("DELETE FROM Users WHERE UserID="+deluserid, function(err,result){
+    if (err)
+    {
+      console.log(err)
+    }
+    else
+    {
+      req.flash('success', 'User has been deleted.');
+      res.redirect('/allUsers');
+    }
   });
 });
 
