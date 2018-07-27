@@ -1001,7 +1001,7 @@ app.get('/logout', isLoggedIn, function(req, res, next)
 app.get('/allcheckouters', isLoggedIn, function(req, res, next)
 {
   //var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
-	con.query("select UserID, Name From Users U Where Not Exists (((select BookISBN from Checkout_Books) Except (select BookISBN from Checkout_Books B Where B.UserID=U.UserID)) Union ((select BookISBN from Checkout_Textbooks) Except (select BookISBN from Checkout_Textbooks T Where T.UserID = U.UserID)))", function(err,result)){
+	con.query("select UserID, Name From Users U Where Not Exists ((select LaptopID from Checkout_Laptops) Except (select LaptopISBN from Checkout_Laptops L Where L.UserID=U.UserID))", function(err,result)){
 	//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)		//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
 if (err) {
  	console.log(err);
@@ -1013,7 +1013,7 @@ if (err) {
  		var htmlpage = `User that has used all books: ` + result[0].Name //note this is incomplete
  	}
  }
-}
+
 
   if(allUsers > 0)
   {
@@ -1027,5 +1027,6 @@ if (err) {
     req.flash('error', "No such users found");
     res.redirect('/librarian')
   }
+} //end query
 });
 */
