@@ -480,11 +480,16 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
 
 var resultsPage;
 var allAttributes;
-var rows;
+var rows= ``;
 var endTable;
 
 app.post('/search',isLoggedIn, function(req, res, next)
 {
+  //removing previous searches
+  if(rows != ``)
+  {
+    rows=``;
+  }
   console.log("Inside post request search");
   var stat= req.session.user.Status;
   console.log("Status: "+stat);
