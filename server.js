@@ -473,6 +473,11 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
 	<a id="viewWorkBooks" href="/allWorkBooks">View all workbooks</a>
 	<br>
 	<a id="viewCheck" href="/allCheckedOut">View users that have checked out all books</a>
+	  <br><br><br>
+  		<div style="text-align: left;">
+  			<a id="numUsers" href="/numUsers"><font size = "2.5"><font color = 
+      				"black">View total number of users registered</font></a>
+  		</div>
 	<br>`+messageHead+`
 </body>
 </html>`
@@ -775,6 +780,51 @@ app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
       res.write(resultsPage2+allAttributes2+rows2+endTable2);
       res.end()
   });
+});
+
+app.get('/numUsers',isLoggedIn, function(req, res, next)
+{
+  con.query("select count(userID) as mine from Users", function(err,result) 
+  {
+    if(err) throw err;
+    else
+  var test = (JSON.stringify(result));
+  console.log(test);
+  var json = JSON.parse(test);
+  console.log(json);
+  console.log(json[1]);
+  console.log(result[0].mine);
+  var num = result[0].mine;
+
+  var pp =20;
+  var myHtml= `<!DOCTYPE html>
+  <html>
+  <head>
+  <title> myLibrary | User Page </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel= "stylesheet" href='./homepage.css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+       <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+     </ul>
+    </div>
+  </nav>
+  <p>There are currently: </p>`
+
+
+
+res.write(myHtml + num + " users registered in the database");
+res.end();
+  });//end from the query
 });
 
 app.get('/allWorkBooks', isLoggedIn, function(req, res, next)
