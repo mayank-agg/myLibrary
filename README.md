@@ -1,8 +1,7 @@
 # myLibrary
 Description: 
 
-This project is based on a university library in which there are different classes of users: student, teachers and librarians. Each class of users have different permissions and has access to different tables/functions. The virtual library allows students and teachers to search up different books based on their ISBN, publisher, title, author and genre. The display page will either show a table of just the names of the books or will include any additional information as well. Additionally, teachers when searching will be able to view any available textbooks whereas librarians are able to view a list of all books/workbooks/laptops. 
-
+This project is based on a university library in which there are different classes of users: students, teachers, and librarians. Each class of users has different sets of permissions and views. The idea is to build a web application called myLibrary which will allow users to use features of a virtual library by accessing the database allowing students and teachers to check out books from the database and librarians to check in books when they are returned. Users will be able to search for books and be able to filter through the library using the attributes pertaining to the books such as genre, author, publisher, and year. Textbooks will have the same attributes as books, but will include a course ID as an attribute. Librarians will be able to add new books or delete books off the database if they have gone missing or been damaged, and update the count if new copies have been added. Additional information about the application is provided below. 
 
 Domain:
 
