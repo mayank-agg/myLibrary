@@ -486,7 +486,8 @@ var resultsPage;
 var allAttributes;
 var rows= ``;
 var endTable;
-
+var checkoutform;
+var messageHead;
 app.post('/search',isLoggedIn, function(req, res, next)
 {
   //removing previous searches
@@ -581,8 +582,10 @@ app.post('/search',isLoggedIn, function(req, res, next)
   else
   {
     //user has asked for all columns.
-    con.query("select * from Checkout_Books where quantity > 0 and "+dropDownVal+"="+"'"+searchedFor+"'", function(err, result)
+    con.query("select * from Checkout_Books where Quantity > 0 and "+dropDownVal+"="+"'"+searchedFor+"'", function(err, result)
     {
+      var message2 = req.flash('success');
+      var messageHead = `<p id="messages4">`+message2+`</p>`;
       if(err)
       {
         console.log(err)
@@ -612,6 +615,21 @@ app.post('/search',isLoggedIn, function(req, res, next)
 		       </tr>`
          }
 	         endTable= `</table>`
+           checkoutform=
+           `
+           <br>
+           Checkout a book?
+           <form action = "/checkoutabook" method="post">
+           Enter Book ISBN:
+           <br>
+           <input type="text" name="checkoutisbn"
+           <br>
+           <input type="submit" value="Submit">
+           <br>
+           </form>
+           </body>
+           </html>
+           `
            res.redirect('/newSearch');
         }
         else
@@ -640,9 +658,24 @@ app.post('/search',isLoggedIn, function(req, res, next)
   }
 });
 
+app.post('/checkoutabook', function(req,res,next){
+  var checkoutisbn = `${req.body.checkoutisbn}`;
+  con.query("UPDATE Checkout_Books SET Quantity = 0 WHERE BookISBN="+checkoutisbn, function(err,result){
+    if (err)
+    {
+      console.log(err)
+    }
+    else
+    {
+      req.flash('success', 'Book has been checked out.');
+      res.redirect('/Student');
+    }
+  });
+});
+
 app.get('/newSearch',isLoggedIn, function(req, res, next)
 {
-  var toServe= resultsPage+allAttributes+rows+endTable;
+  var toServe= resultsPage+allAttributes+rows+endTable+checkoutform+messageHead;
   res.write(toServe)
   res.end()
 });
