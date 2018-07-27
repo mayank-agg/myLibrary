@@ -38,10 +38,54 @@ hr {
   top: 105px;
   left: 5px;
 }
+
 #updating:hover {
   color: navy;
   text-decoration: underline;
 }
+
+#allUsers {
+  color: black;
+  font-size: 15px;
+  text-decoration: none;
+  position: absolute;
+  top: 25px;
+  left: 5px;
+}
+
+#allUsers:hover {
+  color: navy;
+  text-decoration: underline;
+}
+
+#allLaptops {
+  color: black;
+  font-size: 15px;
+  text-decoration: none;
+  position: absolute;
+  top: 45px;
+  left: 5px;
+}
+
+#allLaptops:hover {
+  color: navy;
+  text-decoration: underline;
+}
+
+#numUsers {
+  color: black;
+  font-size: 15px;
+  text-decoration: none;
+  position: absolute;
+  top: 125px;
+  left: 5px;
+}
+
+#numUsers:hover {
+  color: navy;
+  text-decoration: underline;
+}
+
 #updatingt:hover {
   color: navy;
   text-decoration: underline;

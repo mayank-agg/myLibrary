@@ -475,11 +475,9 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
 	<a id="viewWorkBooks" href="/allWorkBooks">View all workbooks</a>
 	<br>
 	<a id="viewCheck" href="/allCheckedOut">View users that have checked out all books</a>
-	  <br><br><br>
-  		<div style="text-align: left;">
-  			<a id="numUsers" href="/numUsers"><font size = "2.5"><font color =
-      				"black">View total number of users registered</font></a>
-  		</div>
+  <br>
+  <a id="numUsers" href="/numUsers">View total number of users registered</a>
+  <br>
 	<br>`+messageHead+`
 </body>
 </html>`
@@ -913,7 +911,7 @@ app.get('/numUsers',isLoggedIn, function(req, res, next)
 
 
 
-res.write(myHtml + num + " users registered in the database");
+res.write(myHtml + num + " users registered in the database.");
 res.end();
   });//end from the query
 });
