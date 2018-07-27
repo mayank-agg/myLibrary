@@ -474,9 +474,11 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
   <br>
 	<a id="viewWorkBooks" href="/allWorkBooks">View all workbooks</a>
 	<br>
-	<a id="viewCheck" href="/allcheckouters">View users that have checked out all books</a>
+	<a id="viewCheck" href="/allCheckedOut">View users that have checked out all books</a>
   <br>
   <a id="numUsers" href="/numUsers">View total number of users registered</a>
+  <br>
+  <a id="division" href="/allcheckouters">View user who has checked out all laptops</a>
   <br>
 	<br>`+messageHead+`
 </body>
@@ -1001,11 +1003,34 @@ app.get('/logout', isLoggedIn, function(req, res, next)
     res.redirect('/');
   });
 });
+
 app.get('/allcheckouters', isLoggedIn, function(req, res, next)
 {
   //var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
 	con.query("Select UserID, Name From Users U Where Not Exists (select * from Laptops L where not exists (select * from Checkedout C where C.UserID = U.UserID and L.LaptopID = C.LaptopID))", function(err,result)
 {
+  var myHtml= `<!DOCTYPE html>
+  <html>
+  <head>
+  <title> myLibrary | User Page </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel= "stylesheet" href='./homepage.css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+       <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+     </ul>
+    </div>
+  </nav>`
+  
 	//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)		//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
 if (err) {
  	console.log(err);
@@ -1014,17 +1039,16 @@ if (err) {
  	if (result.length > 0) {
  		console.log("Division successful");
  		console.log(result);
- 		var divisionpage = "User that has used all books: " + result[0].Name; //note this is incomplete
+ 		var divisionpage = "User that has used all laptops: " + result[0].Name + " with a UserID of: "+result[0].UserID; //note this is incomplete
  	} else {
-		var divisionpage = "No Users have checked out all books";
+		var divisionpage = "No Users have checked out all laptops";
 	}
  }
-
 
   /*if(allUsers > 0)
   {*/
   //  var htmlpage= append the user to html and serve the page.
-    var toServe= head + body + divisionpage;
+    var toServe= myHtml + divisionpage;
     res.write(toServe);
     res.end();
   //}
@@ -1035,4 +1059,3 @@ if (err) {
   }*/
 });
 });
-
