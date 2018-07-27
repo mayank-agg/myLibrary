@@ -1001,35 +1001,38 @@ app.get('/logout', isLoggedIn, function(req, res, next)
     res.redirect('/');
   });
 });
-/*
 app.get('/allcheckouters', isLoggedIn, function(req, res, next)
 {
   //var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
-	con.query("select UserID, Name From Users U Where Not Exists (((select BookISBN from Checkout_Books) Except (select BookISBN from Checkout_Books B Where B.UserID=U.UserID)) Union ((select BookISBN from Checkout_Textbooks) Except (select BookISBN from Checkout_Textbooks T Where T.UserID = U.UserID)))", function(err,result)){
+	con.query("Select UserID, Name From Users U Where Not Exists (select * from Laptops L where not exists (select * from Checkedout C where C.UserID = U.UserID and L.LaptopID = C.LaptopID))", function(err,result)
+{
 	//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)		//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
 if (err) {
  	console.log(err);
  }
  else {
- 	if (result.length != 0) {
+ 	if (result.length > 0) {
  		console.log("Division successful");
  		console.log(result);
- 		var htmlpage = `User that has used all books: ` + result[0].Name //note this is incomplete
- 	}
+ 		var divisionpage = "User that has used all books: " + result[0].Name; //note this is incomplete
+ 	} else {
+		var divisionpage = "No Users have checked out all books";
+	}
  }
-}
 
-  if(allUsers > 0)
-  {
+
+  /*if(allUsers > 0)
+  {*/
   //  var htmlpage= append the user to html and serve the page.
-    var toServe= head + body + htmlpage;
+    var toServe= head + body + divisionpage;
     res.write(toServe);
     res.end();
-  }
-  else
+  //}
+  /*else
   {
     req.flash('error', "No such users found");
-    res.redirect('/librarian')
-  }
+    res.redirect('/librarian');
+  }*/
 });
-*/
+});
+
