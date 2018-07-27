@@ -41,7 +41,8 @@ var server= http.createServer(app).listen(port);
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "root"
+  user: "root",
+  password: "Superkhmer5!"
 });
 
 con.connect(function(err) {
@@ -104,8 +105,8 @@ app.get('/', function(req, res, next)
   var successRegister= req.flash('success');
   var formHead= `<p id="messages2">`+errorMessage+`</p>`+`<p id="messages2">`+successRegister+`</p>`
   var form= `<div style="margin: 10px"><h4> Please login first </h4><br> <form action= "/loginMe" method="POST">
-  <label for="userid"><b> User id: </b></label>
-  <input type="text" name= "id" id= "userid"><br><br>
+  <label for="UserID"><b> User id: </b></label>
+  <input type="text" name= "id" id= "UserID"><br><br>
   <label for="password"><b> Password: </b></label>
   <input type= "password" name= "password" id= "password"><br><br>
   <input type="submit" value="Login" id= "submit">
@@ -124,7 +125,7 @@ app.post('/loginMe', function(req, res, next)
   var user= null;
   //users table: 3 tables with 2 columns each. : Student(Id, Passowrd), Teacher(id, password), Librarian(ID, password)
   var myid= `${req.body.id}`;
-  con.query("select * from users where userid="+myid, function(err, result)
+  con.query("select * from Users where UserID="+myid, function(err, result)
   {
     if(result.length ==0)
     {
@@ -193,7 +194,7 @@ app.get('/register', function(req, res, next)
       <p style="color: red">`+usernameExists+`</p>
   	     Name: <br>
   	      <input type="text" name="fname"><br>
-          Userid: <br>
+          UserID: <br>
           <input name="id" type="text"><br>
   	       Role: <br>
   	        <input type="radio" name="status" value="Student" checked> Student <br>
@@ -221,7 +222,7 @@ app.post('/addMe', function(req, res, next)
   var fname= `${req.body.fname}`;
   var valueid= `${req.body.id}`;
   var valuePass= `${req.body.password}`;
-  con.query("select * from users where userid="+valueid, function(err, result)
+  con.query("select * from users where UserID="+valueid, function(err, result)
   {
     if(err)
     {
@@ -349,11 +350,11 @@ app.post('/updatePass', function(req, res, next)
 {
   var user= JSON.stringify(req.session.user);
   var newPass= `${req.body.newPass}`;
-  var userid= req.session.user.UserID;
+  var UserID= req.session.user.UserID;
   var st= req.session.user.Status
-  console.log(userid);
+  console.log(UserID);
   console.log("User before updating: "+user);
-  con.query("update users set Pass="+"'"+newPass+"'"+" where userid="+userid, function(err, result)
+  con.query("update Users set Pass="+"'"+newPass+"'"+" where UserID="+UserID, function(err, result)
   {
     if(err)
     {
@@ -468,6 +469,8 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
 <br>
   <a id="updating" href="/update"> Update your Password </a>
 	<br>
+  <a id="allUsers" href="/allUsers"> Show all registered users </a>
+  <br>
 	<a id="viewWorkBooks" href="/allWorkBooks">View all workbooks</a>
 	<br>
 	<a id="viewCheck" href="/allCheckedOut">View users that have checked out all books</a>
@@ -525,7 +528,7 @@ app.post('/search',isLoggedIn, function(req, res, next)
     //NOTE: In all the cases, just display those books whose count != 0. (that is they have not been checked out)
   //2) db query: Selection query- select * from books where dropDownVal (column ex: Author)= searchedFor (value of that column)
   //take the results and append them to html.
-  con.query("select title from checkout_books where quantity > 0 and "+dropDownVal+"="+"'"+searchedFor+"'", function(err, result)
+  con.query("select title from Checkout_Books where quantity > 0 and "+dropDownVal+"="+"'"+searchedFor+"'", function(err, result)
   {
     if(err)
     {
@@ -577,7 +580,7 @@ app.post('/search',isLoggedIn, function(req, res, next)
   else
   {
     //user has asked for all columns.
-    con.query("select * from checkout_books where quantity > 0 and "+dropDownVal+"="+"'"+searchedFor+"'", function(err, result)
+    con.query("select * from Checkout_Books where quantity > 0 and "+dropDownVal+"="+"'"+searchedFor+"'", function(err, result)
     {
       if(err)
       {
@@ -643,11 +646,59 @@ app.get('/newSearch',isLoggedIn, function(req, res, next)
   res.end()
 });
 
+app.get ('/allUsers', isLoggedIn, function(req, res, next)
+{
+  con.query("select * from Users", function(err, result)
+  {
+  var resultsPage2= `<!DOCTYPE html>
+  <html>
+  <head>
+  <title> myLibrary | User Page </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel= "stylesheet" href='./homepage.css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+       <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+     </ul>
+    </div>
+  </nav>`
+  var allAttributes2= `<table style:"width=100%">
+	<tr>
+		<th>UserID</th>
+		<th>Name</th>
+		<th>Status</th>
+    <th>Delete User?</th>
+	  </tr>`;
+    var rows2;
+    for(var k=0; k<result.length; k++)
+    {
+      rows2+= `<tr>
+      <td>`+result[k].UserID+`</td>
+      <td>`+result[k].Name+`</td>
+      <td>`+result[k].Status+`</td>
+      <td><a href=con.query("DELETE FROM Users WHERE UserID="+result[k].UserID, function(err, result4){});</a></td>
+      </tr>`
+    }
+      var endTable2= `</table>`
+      res.write(resultsPage2+allAttributes2+rows2+endTable2);
+      res.end()
+  });
+});
+
 app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
 {
  //take the results and append them to html.
   //3) db query: Join- select * from checkedOutBooks (if such a table exists) (join with students, teachers) (using id as joiining condition (present in all the tables))
-  con.query("select * from checkout_books c, users u where c.userid = u.userid", function(err, result)
+  con.query("select * from Checkout_Books c, Users u where c.UserID = u.UserID", function(err, result)
   {
   var resultsPage2= `<!DOCTYPE html>
   <html>
@@ -686,9 +737,9 @@ app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
       rows2+= `<tr>
       <td>`+result[k].BookISBN+`</td>
       <td>`+result[k].Title+`</td>
-      <td>`+result[k].Genre+`</td>
-      <td>`+result[k].Author+`</td>
       <td>`+result[k].Publisher+`</td>
+      <td>`+result[k].Author+`</td>
+      <td>`+result[k].Genre+`</td>
       <td>`+result[k].UserID+`</td>
       <td>`+result[k].Name+`</td>
       </tr>`
@@ -756,7 +807,7 @@ app.post('/checkmein', isLoggedIn, function(req, res, next)
 app.get('/deleteme', isLoggedIn, function(req, res, next)
 {
   var toDel= req.session.user;
-  var userid= toDel.myid;
+  var UserID= toDel.myid;
   var userstatus= toDel.mystatus;
   //find the id and remove it from the db (from the status table);
   //7) db query: delete on cascade- if status= teacher, then on cascade (workbooks are also deleted related to that teacher.)
