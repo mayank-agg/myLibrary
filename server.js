@@ -474,7 +474,7 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
   <br>
 	<a id="viewWorkBooks" href="/allWorkBooks">View all workbooks</a>
 	<br>
-	<a id="viewCheck" href="/allCheckedOut">View users that have checked out all books</a>
+	<a id="viewCheck" href="/allcheckouters">View users that have checked out all books</a>
   <br>
   <a id="numUsers" href="/numUsers">View total number of users registered</a>
   <br>
