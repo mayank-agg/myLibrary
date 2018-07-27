@@ -477,7 +477,7 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
 	<a id="viewCheck" href="/allCheckedOut">View users that have checked out all books</a>
 	  <br><br><br>
   		<div style="text-align: left;">
-  			<a id="numUsers" href="/numUsers"><font size = "2.5"><font color = 
+  			<a id="numUsers" href="/numUsers"><font size = "2.5"><font color =
       				"black">View total number of users registered</font></a>
   		</div>
 	<br>`+messageHead+`
@@ -629,6 +629,11 @@ app.post('/search',isLoggedIn, function(req, res, next)
            <br>
            <input type="text" name="checkoutisbn"
            <br>
+           <br>
+           Enter Your UserID:
+           <br>
+           <input type="text" name="checkoutuserid"
+           <br>
            <input type="submit" value="Submit">
            <br>
            </form>
@@ -665,7 +670,8 @@ app.post('/search',isLoggedIn, function(req, res, next)
 
 app.post('/checkoutabook', function(req,res,next){
   var checkoutisbn = `${req.body.checkoutisbn}`;
-  con.query("UPDATE Checkout_Books SET Quantity = 0 WHERE BookISBN="+checkoutisbn, function(err,result){
+  var checkoutuserid = `${req.body.checkoutuserid}`;
+  con.query("UPDATE Checkout_Books SET Quantity = 0, UserID="+checkoutuserid+" WHERE BookISBN="+checkoutisbn, function(err,result){
     if (err)
     {
       console.log(err)
@@ -838,7 +844,7 @@ app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
      </ul>
     </div>
   </nav>`
-  var allAttributes2= `<table style:"width=100%">
+  var allAttributes2= `<table id="bookTable", style:"width=100%">
 	<tr>
 		<th>BookISBN</th>
 		<th>Title</th>
@@ -846,9 +852,9 @@ app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
 		<th>Author</th>
 		<th>Genre</th>
 		<th>UserID</th>
-		<th>FirstName</th>
+		<th>Name</th>
 	  </tr>`;
-    var rows2;
+    var rows2=``;
     for(var k=0; k<result.length; k++)
     {
       rows2+= `<tr>
@@ -869,7 +875,7 @@ app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
 
 app.get('/numUsers',isLoggedIn, function(req, res, next)
 {
-  con.query("select count(userID) as mine from Users", function(err,result) 
+  con.query("select count(userID) as mine from Users", function(err,result)
   {
     if(err) throw err;
     else
@@ -1001,7 +1007,7 @@ app.get('/logout', isLoggedIn, function(req, res, next)
 app.get('/allcheckouters', isLoggedIn, function(req, res, next)
 {
   //var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
-	con.query("select UserID, Name From Users U Where Not Exists ((select LaptopID from Checkout_Laptops) Except (select LaptopISBN from Checkout_Laptops L Where L.UserID=U.UserID))", function(err,result)){
+	con.query("select UserID, Name From Users U Where Not Exists (((select BookISBN from Checkout_Books) Except (select BookISBN from Checkout_Books B Where B.UserID=U.UserID)) Union ((select BookISBN from Checkout_Textbooks) Except (select BookISBN from Checkout_Textbooks T Where T.UserID = U.UserID)))", function(err,result)){
 	//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)		//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
 if (err) {
  	console.log(err);
@@ -1013,7 +1019,7 @@ if (err) {
  		var htmlpage = `User that has used all books: ` + result[0].Name //note this is incomplete
  	}
  }
-
+}
 
   if(allUsers > 0)
   {
@@ -1027,6 +1033,5 @@ if (err) {
     req.flash('error', "No such users found");
     res.redirect('/librarian')
   }
-} //end query
 });
 */
