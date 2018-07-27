@@ -41,8 +41,7 @@ var server= http.createServer(app).listen(port);
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "root",
-  password: "Superkhmer5!"
+  user: "root"
 });
 
 con.connect(function(err) {
