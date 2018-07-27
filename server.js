@@ -647,6 +647,8 @@ app.get('/newSearch',isLoggedIn, function(req, res, next)
 
 app.get ('/allUsers', isLoggedIn, function(req, res, next)
 {
+  var message2 = req.flash('success');
+  var messageHead = `<p id="messages4">`+message2+`</p>`;
   con.query("select * from Users", function(err, result)
   {
   var resultsPage2= `<!DOCTYPE html>
@@ -670,13 +672,13 @@ app.get ('/allUsers', isLoggedIn, function(req, res, next)
      </ul>
     </div>
   </nav>`
-  var allAttributes2= `<table style:"width=100%">
+  var allAttributes2= `<table id="bookTable", style:"width=100%">
 	<tr>
 		<th>UserID</th>
 		<th>Name</th>
 		<th>Status</th>
 	  </tr>`;
-    var rows2;
+    var rows2 =``;
     for(var k=0; k<result.length; k++)
     {
       rows2+= `<tr>
@@ -696,8 +698,10 @@ app.get ('/allUsers', isLoggedIn, function(req, res, next)
       <br>
       <input type="submit" value="Submit">
       <br>
-      </form>`
-      res.write(resultsPage2+allAttributes2+rows2+endTable2+deleteform);
+      </form>
+    </body>
+    </html>`;
+      res.write(resultsPage2+allAttributes2+rows2+endTable2+deleteform+messageHead);
       res.end()
   });
 });
@@ -858,21 +862,21 @@ app.get('/logout', isLoggedIn, function(req, res, next)
     res.redirect('/');
   });
 });
-
+/*
 app.get('/allcheckouters', isLoggedIn, function(req, res, next)
 {
   //var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
-	con.query("select UserID, Name From Users U Where Not Exists (((select BookISBN from Checkout_Books) Except (select BookISBN from Checkout_Books B Where B.UserID=U.UserID)) Union ((select BookISBN from Checkout_Textbooks) Except (select BookISBN from Checkout_Textbooks T Where T.UserID = U.UserID)))", function(err,result)){		
+	con.query("select UserID, Name From Users U Where Not Exists (((select BookISBN from Checkout_Books) Except (select BookISBN from Checkout_Books B Where B.UserID=U.UserID)) Union ((select BookISBN from Checkout_Textbooks) Except (select BookISBN from Checkout_Textbooks T Where T.UserID = U.UserID)))", function(err,result)){
 	//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)		//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
-if (err) {		
- 	console.log(err);		
- }		
- else {		
- 	if (result.length != 0) {		
- 		console.log("Division successful");		
- 		console.log(result);		
- 		var htmlpage = `User that has used all books: ` + result[0].Name //note this is incomplete		
- 	}		
+if (err) {
+ 	console.log(err);
+ }
+ else {
+ 	if (result.length != 0) {
+ 		console.log("Division successful");
+ 		console.log(result);
+ 		var htmlpage = `User that has used all books: ` + result[0].Name //note this is incomplete
+ 	}
  }
 }
 
@@ -889,3 +893,4 @@ if (err) {
     res.redirect('/librarian')
   }
 });
+*/

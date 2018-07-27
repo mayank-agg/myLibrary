@@ -120,6 +120,13 @@ tr {
   left: 5px;
   color: red;
 }
+
+#messages4{
+  position:absolute;
+  top: 50px;
+  left: 5px;
+  color: red;
+}
 #welcomeMessage {
   position: absolute;
   top:60px;
