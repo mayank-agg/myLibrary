@@ -470,6 +470,8 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
 	<br>
   <a id="allUsers" href="/allUsers"> Show all registered users </a>
   <br>
+  <a id="allLaptops" href="/allLaptops">View all laptops</a>
+  <br>
 	<a id="viewWorkBooks" href="/allWorkBooks">View all workbooks</a>
 	<br>
 	<a id="viewCheck" href="/allCheckedOut">View users that have checked out all books</a>
@@ -593,11 +595,11 @@ app.post('/search',isLoggedIn, function(req, res, next)
           console.log(result);
           allAttributes= `<table id="bookTable">
 		      <tr>
-         <th>BookISBN</th>
-			   <th>Title</th>
-			    <th>Genre</th>
-			   <th>Author</th>
-			  <th>Publisher</th>
+            <th>BookISBN</th>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Author</th>
+            <th>Publisher</th>
 		     </tr>`;
          for(var t=0; t<result.length; t++)
          {
@@ -643,6 +645,56 @@ app.get('/newSearch',isLoggedIn, function(req, res, next)
   var toServe= resultsPage+allAttributes+rows+endTable;
   res.write(toServe)
   res.end()
+});
+
+app.get('/allLaptops',isLoggedIn, function(req, res, next)
+{
+ //take the results and append them to html.
+  //3) db query: Join- select * from checkedOutBooks (if such a table exists) (join with students, teachers) (using id as joiining condition (present in all the tables))
+  con.query("select * from Checkedout_Laptops", function(err, result)
+  {
+  var resultsPage2= `<!DOCTYPE html>
+  <html>
+  <head>
+  <title> myLibrary | User Page </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel= "stylesheet" href='./homepage.css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+       <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+     </ul>
+    </div>
+  </nav>`
+  var allAttributes2= `<table id="bookTable", style:"width=100%">
+	<tr>
+		<th>LaptopID</th>
+		<th>Brand</th>
+		<th>UserID</th>
+		<th>Quantity</th>
+	  </tr>`;
+    var rows2=``;
+    for(var k=0; k<result.length; k++)
+    {
+      rows2+= `<tr>
+      <td>`+result[k].LaptopID+`</td>
+      <td>`+result[k].Brand+`</td>
+      <td>`+result[k].UserID+`</td>
+      <td>`+result[k].Quantity+`</td>
+      </tr>`
+    }
+      var endTable2= `</table>`
+      res.write(resultsPage2+allAttributes2+rows2+endTable2);
+      res.end()
+  });
 });
 
 app.get ('/allUsers', isLoggedIn, function(req, res, next)
