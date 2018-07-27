@@ -5,22 +5,32 @@
 <link rel= "stylesheet" href='./homepage.css'>
 </head>
 <body>
+    <nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+       <li><a href="/signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+     </ul>
+     </nav>
 <div class="container">
   <div class="signup-content">
-    <h2> Sign Up</h2>	
-    <form>		
-	Name: <br>
-	<input type="text" name="fname"><br>
-	ID: <br>
-	<input type="text" name="id"><br>
-	Role: <br>
-	<input type="radio" name="role" value="student" checked> Student <br>
-	<input type="radio" name="role" value="teacher"> Teacher <br>
-	<input type="radio" name="role" value="librarian"> Librarian <br>	
-	Password: <br>
-	<input type="password" name="Password"><br>
-	<br>
-	<input type="submit" value="Submit"><br>
+    <h2> Sign Up</h2>
+    <form action= "/addMe" method="post">
+	     Name: <br>
+	      <input type="text" name="fname"><br>
+        Userid: <br>
+        <input name="id" type="text"><br>
+	       Role: <br>
+	        <input type="radio" name="status" value="Student" checked> Student <br>
+	        <input type="radio" name="status" value="Teacher"> Teacher <br>
+	        <input type="radio" name="status" value="Librarian"> Librarian <br>
+	        Password: <br>
+	       <input type="password" name="password"><br>
+	       <br>
+	       <input type="submit" value="Submit"><br>
+         <a href="/"> Go Home </a>
     </form>
   </div>
 </div>
