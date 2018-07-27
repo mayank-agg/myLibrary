@@ -858,9 +858,24 @@ app.get('/logout', isLoggedIn, function(req, res, next)
     res.redirect('/');
   });
 });
+
 app.get('/allcheckouters', isLoggedIn, function(req, res, next)
 {
   //var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
+	con.query("select UserID, Name From Users U Where Not Exists (((select BookISBN from Checkout_Books) Except (select BookISBN from Checkout_Books B Where B.UserID=U.UserID)) Union ((select BookISBN from Checkout_Textbooks) Except (select BookISBN from Checkout_Textbooks T Where T.UserID = U.UserID)))", function(err,result)){		
+	//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)		//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
+if (err) {		
+ 	console.log(err);		
+ }		
+ else {		
+ 	if (result.length != 0) {		
+ 		console.log("Division successful");		
+ 		console.log(result);		
+ 		var htmlpage = `User that has used all books: ` + result[0].Name //note this is incomplete		
+ 	}		
+ }
+}
+
   if(allUsers > 0)
   {
   //  var htmlpage= append the user to html and serve the page.
