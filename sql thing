@@ -1,0 +1,25 @@
+Create Table Laptops (
+	LaptopID INT Primary Key,
+  Brand CHAR(100)
+  );
+
+Create Table Checkedout (
+	LaptopID INTEGER,
+  UserID INTEGER,
+  Quantity INTEGER,
+  Primary Key (LaptopID, UserID),
+  Foreign Key (LaptopID) References Laptops(LaptopID),
+  Foreign Key (UserID) References Users(UserID)
+);
+
+Insert Into Laptops VALUES
+(1000, 'Lenovo'),
+(1001, 'Dell');
+
+Insert Into Checkedout values
+(1000, 1, 0),
+(1001, 1, 0);
+
+Insert INTO Checkedout_Laptops VALUES
+(1000, 'Lenovo', '2018-07-23', 0001, 0),
+(1001, 'Dell', '2018-07-24', 0002, 0);
