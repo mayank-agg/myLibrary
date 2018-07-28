@@ -94,7 +94,7 @@ var body= `<body>
     </div>`
 
 var signup=  `<ul class="nav navbar-nav navbar-right">
-     <li><a href="/signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+     <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
    </ul>
    </nav>`
 //serving homepage: must contain a way to login (post request to login), and a link to sign up which sends a get request to "/register".
@@ -115,7 +115,6 @@ app.get('/', function(req, res, next)
   res.write(head+body+signup+formHead+form);
   res.end();
 });
-
 //user has clicked on "login" on homepage (form action= '/login')
 app.post('/loginMe', function(req, res, next)
 {
@@ -169,49 +168,62 @@ app.post('/loginMe', function(req, res, next)
 app.get('/register', function(req, res, next)
 {
   var usernameExists= req.flash('error');
-  console.log(usernameExists)
-  var file= `<!DOCTYPE html>
-  <html>
-  <head>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel= "stylesheet" href='./homepage.css'>
-  </head>
-  <body>
-      <nav class="navbar navbar-inverse navbar-static-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
-        </div>
-        <ul class="nav navbar-nav navbar-right">
-         <li><a href="/signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-       </ul>
-       </nav>
-  <div class="container">
-    <div class="signup-content">
-      <h2> Sign Up</h2>
-      <form action= "/addMe" method="post">
-      <p style="color: red">`+usernameExists+`</p>
-  	     Name: <br>
-  	      <input type="text" name="fname"><br>
-          UserID: <br>
-          <input name="id" type="text"><br>
-  	       Role: <br>
-  	        <input type="radio" name="status" value="Student" checked> Student <br>
-  	        <input type="radio" name="status" value="Teacher"> Teacher <br>
-  	        <input type="radio" name="status" value="Librarian"> Librarian <br>
-  	        Password: <br>
-  	       <input type="password" name="password"><br>
-  	       <br>
-  	       <input type="submit" value="Submit"><br>
-           <a href="/"> Go Home </a>
-      </form>
-    </div>
-  </div>
+  con.query(`Select userID
+  From Users
+  Where userID = (select max(userID) from Users)`, function(err, result)
+  {
+    if(err)
+    {
+      console.log(err)
+    }
+    else
+    {
+      console.log(result);
+      var num= result[0].userID;
+      var file= `<!DOCTYPE html>
+      <html>
+      <head>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <link rel= "stylesheet" href='./homepage.css'>
+      </head>
+      <body>
+          <nav class="navbar navbar-inverse navbar-static-top">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+             <li><a href="/signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+           </ul>
+           </nav>
+      <div class="container">
+        <div class="signup-content">
+          <h2> Sign Up</h2>
+          <form action= "/addMe" method="post">
+          <p style="color: red">`+usernameExists+`</p>
+      	     Name: <br>
+      	      <input type="text" name="fname"><br>
+              UserID: <br>
+              <input name="id" type="text"><br>
+      	       Role: <br>
+      	        <input type="radio" name="status" value="Student" checked> Student <br>
+      	        <input type="radio" name="status" value="Teacher"> Teacher <br>
+      	        <input type="radio" name="status" value="Librarian"> Librarian <br>
+      	        Password: <br>
+      	       <input type="password" name="password"><br>
+      	       <br>
+      	       <input type="submit" value="Submit"><br>
+               <a href="/"> Go Home </a>
+          </form>
+        </div> <p> Current maximum UserID: `+num+`. Please choose an ID more than the current maximum. </p>
+      </div>
 
-  </body>
-  </html>`
-  res.write(file);
-  res.end();
+      </body>
+      </html>`
+      res.write(file);
+      res.end();
+    }
+  });
 });
 
 //user has filled the form and has submitted: form contains: id, password, status
@@ -232,7 +244,7 @@ app.post('/addMe', function(req, res, next)
       console.log(result);
       if(result.length > 0)
       {
-        req.flash('error', 'This ID is talen. Please choose a different one. ');
+        req.flash('error', 'This ID is taken. Please choose a different one. ');
         res.redirect('/register');
       }
       else
@@ -1030,7 +1042,7 @@ app.get('/allcheckouters', isLoggedIn, function(req, res, next)
      </ul>
     </div>
   </nav>`
-  
+
 	//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)		//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
 if (err) {
  	console.log(err);
