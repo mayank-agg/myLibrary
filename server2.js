@@ -41,7 +41,8 @@ var server= http.createServer(app).listen(port);
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "root"
+  user: "root",
+  password: ""
 });
 
 con.connect(function(err) {
@@ -94,7 +95,7 @@ var body= `<body>
     </div>`
 
 var signup=  `<ul class="nav navbar-nav navbar-right">
-     <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+     <li><a href="/signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
    </ul>
    </nav>`
 //serving homepage: must contain a way to login (post request to login), and a link to sign up which sends a get request to "/register".
@@ -115,6 +116,7 @@ app.get('/', function(req, res, next)
   res.write(head+body+signup+formHead+form);
   res.end();
 });
+
 //user has clicked on "login" on homepage (form action= '/login')
 app.post('/loginMe', function(req, res, next)
 {
@@ -168,62 +170,49 @@ app.post('/loginMe', function(req, res, next)
 app.get('/register', function(req, res, next)
 {
   var usernameExists= req.flash('error');
-  con.query(`Select userID
-  From Users
-  Where userID = (select max(userID) from Users)`, function(err, result)
-  {
-    if(err)
-    {
-      console.log(err)
-    }
-    else
-    {
-      console.log(result);
-      var num= result[0].userID;
-      var file= `<!DOCTYPE html>
-      <html>
-      <head>
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-      <link rel= "stylesheet" href='./homepage.css'>
-      </head>
-      <body>
-          <nav class="navbar navbar-inverse navbar-static-top">
-          <div class="container-fluid">
-            <div class="navbar-header">
-              <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
-            </div>
-            <ul class="nav navbar-nav navbar-right">
-             <li><a href="/signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-           </ul>
-           </nav>
-      <div class="container">
-        <div class="signup-content">
-          <h2> Sign Up</h2>
-          <form action= "/addMe" method="post">
-          <p style="color: red">`+usernameExists+`</p>
-      	     Name: <br>
-      	      <input type="text" name="fname"><br>
-              UserID: <br>
-              <input name="id" type="text"><br>
-      	       Role: <br>
-      	        <input type="radio" name="status" value="Student" checked> Student <br>
-      	        <input type="radio" name="status" value="Teacher"> Teacher <br>
-      	        <input type="radio" name="status" value="Librarian"> Librarian <br>
-      	        Password: <br>
-      	       <input type="password" name="password"><br>
-      	       <br>
-      	       <input type="submit" value="Submit"><br>
-               <a href="/"> Go Home </a>
-          </form>
-        </div> <p> Current maximum UserID: `+num+`. Please choose an ID more than the current maximum. </p>
-      </div>
+  console.log(usernameExists)
+  var file= `<!DOCTYPE html>
+  <html>
+  <head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel= "stylesheet" href='./homepage.css'>
+  </head>
+  <body>
+      <nav class="navbar navbar-inverse navbar-static-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+         <li><a href="/signup.html"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+       </ul>
+       </nav>
+  <div class="container">
+    <div class="signup-content">
+      <h2> Sign Up</h2>
+      <form action= "/addMe" method="post">
+      <p style="color: red">`+usernameExists+`</p>
+  	     Name: <br>
+  	      <input type="text" name="fname"><br>
+          UserID: <br>
+          <input name="id" type="text"><br>
+  	       Role: <br>
+  	        <input type="radio" name="status" value="Student" checked> Student <br>
+  	        <input type="radio" name="status" value="Teacher"> Teacher <br>
+  	        <input type="radio" name="status" value="Librarian"> Librarian <br>
+  	        Password: <br>
+  	       <input type="password" name="password"><br>
+  	       <br>
+  	       <input type="submit" value="Submit"><br>
+           <a href="/"> Go Home </a>
+      </form>
+    </div>
+  </div>
 
-      </body>
-      </html>`
-      res.write(file);
-      res.end();
-    }
-  });
+  </body>
+  </html>`
+  res.write(file);
+  res.end();
 });
 
 //user has filled the form and has submitted: form contains: id, password, status
@@ -244,7 +233,7 @@ app.post('/addMe', function(req, res, next)
       console.log(result);
       if(result.length > 0)
       {
-        req.flash('error', 'This ID is taken. Please choose a different one. ');
+        req.flash('error', 'This ID is talen. Please choose a different one. ');
         res.redirect('/register');
       }
       else
@@ -478,20 +467,15 @@ app.get('/librarian',isLoggedIn, function(req, res, next)
   </div>
 </nav>`+welcomeMessage+`
 <br>
-  <a id="updating" href="/update"> Update your Password </a>
+  <a id="updating" href="/update">Update your Password</a>
 	<br>
-  <a id="allUsers" href="/allUsers"> Show all registered users </a>
+  <a id="allUsers" href="/allUsers">Show all registered users</a>
   <br>
   <a id="allLaptops" href="/allLaptops">View all laptops</a>
   <br>
 	<a id="viewWorkBooks" href="/allWorkBooks">View all workbooks</a>
 	<br>
 	<a id="viewCheck" href="/allCheckedOut">View users that have checked out all books</a>
-  <br>
-  <a id="numUsers" href="/numUsers">View total number of users registered</a>
-  <br>
-  <a id="division" href="/allcheckouters">View user who has checked out all laptops</a>
-  <br>
 	<br>`+messageHead+`
 </body>
 </html>`
@@ -503,8 +487,7 @@ var resultsPage;
 var allAttributes;
 var rows= ``;
 var endTable;
-var checkoutform;
-var messageHead;
+
 app.post('/search',isLoggedIn, function(req, res, next)
 {
   //removing previous searches
@@ -599,10 +582,8 @@ app.post('/search',isLoggedIn, function(req, res, next)
   else
   {
     //user has asked for all columns.
-    con.query("select * from Checkout_Books where Quantity > 0 and "+dropDownVal+"="+"'"+searchedFor+"'", function(err, result)
+    con.query("select * from Checkout_Books where quantity > 0 and "+dropDownVal+"="+"'"+searchedFor+"'", function(err, result)
     {
-      var message2 = req.flash('success');
-      var messageHead = `<p id="messages4">`+message2+`</p>`;
       if(err)
       {
         console.log(err)
@@ -615,11 +596,11 @@ app.post('/search',isLoggedIn, function(req, res, next)
           console.log(result);
           allAttributes= `<table id="bookTable">
 		      <tr>
-            <th>BookISBN</th>
-            <th>Title</th>
-            <th>Genre</th>
-            <th>Author</th>
-            <th>Publisher</th>
+         <th>BookISBN</th>
+			   <th>Title</th>
+			    <th>Genre</th>
+			   <th>Author</th>
+			  <th>Publisher</th>
 		     </tr>`;
          for(var t=0; t<result.length; t++)
          {
@@ -632,26 +613,6 @@ app.post('/search',isLoggedIn, function(req, res, next)
 		       </tr>`
          }
 	         endTable= `</table>`
-           checkoutform=
-           `
-           <br>
-           Checkout a book?
-           <form action = "/checkoutabook" method="post">
-           Enter Book ISBN:
-           <br>
-           <input type="text" name="checkoutisbn"
-           <br>
-           <br>
-           Enter Your UserID:
-           <br>
-           <input type="text" name="checkoutuserid"
-           <br>
-           <input type="submit" value="Submit">
-           <br>
-           </form>
-           </body>
-           </html>
-           `
            res.redirect('/newSearch');
         }
         else
@@ -680,83 +641,15 @@ app.post('/search',isLoggedIn, function(req, res, next)
   }
 });
 
-app.post('/checkoutabook', function(req,res,next){
-  var checkoutisbn = `${req.body.checkoutisbn}`;
-  var checkoutuserid = `${req.body.checkoutuserid}`;
-  con.query("UPDATE Checkout_Books SET Quantity = 0, UserID="+checkoutuserid+" WHERE BookISBN="+checkoutisbn, function(err,result){
-    if (err)
-    {
-      console.log(err)
-    }
-    else
-    {
-      req.flash('success', 'Book has been checked out.');
-      res.redirect('/Student');
-    }
-  });
-});
-
 app.get('/newSearch',isLoggedIn, function(req, res, next)
 {
-  var toServe= resultsPage+allAttributes+rows+endTable+checkoutform+messageHead;
+  var toServe= resultsPage+allAttributes+rows+endTable;
   res.write(toServe)
   res.end()
 });
 
-app.get('/allLaptops',isLoggedIn, function(req, res, next)
-{
- //take the results and append them to html.
-  //3) db query: Join- select * from checkedOutBooks (if such a table exists) (join with students, teachers) (using id as joiining condition (present in all the tables))
-  con.query("select * from Checkedout_Laptops", function(err, result)
-  {
-  var resultsPage2= `<!DOCTYPE html>
-  <html>
-  <head>
-  <title> myLibrary | User Page </title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel= "stylesheet" href='./homepage.css'>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  </head>
-  <body>
-    <nav class="navbar navbar-inverse navbar-static-top">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
-      </div>
-      <ul class="nav navbar-nav navbar-right">
-       <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
-     </ul>
-    </div>
-  </nav>`
-  var allAttributes2= `<table id="bookTable", style:"width=100%">
-	<tr>
-		<th>LaptopID</th>
-		<th>Brand</th>
-		<th>UserID</th>
-		<th>Quantity</th>
-	  </tr>`;
-    var rows2=``;
-    for(var k=0; k<result.length; k++)
-    {
-      rows2+= `<tr>
-      <td>`+result[k].LaptopID+`</td>
-      <td>`+result[k].Brand+`</td>
-      <td>`+result[k].UserID+`</td>
-      <td>`+result[k].Quantity+`</td>
-      </tr>`
-    }
-      var endTable2= `</table>`
-      res.write(resultsPage2+allAttributes2+rows2+endTable2);
-      res.end()
-  });
-});
-
 app.get ('/allUsers', isLoggedIn, function(req, res, next)
 {
-  var message2 = req.flash('success');
-  var messageHead = `<p id="messages4">`+message2+`</p>`;
   con.query("select * from Users", function(err, result)
   {
   var resultsPage2= `<!DOCTYPE html>
@@ -780,13 +673,13 @@ app.get ('/allUsers', isLoggedIn, function(req, res, next)
      </ul>
     </div>
   </nav>`
-  var allAttributes2= `<table id="bookTable", style:"width=100%">
+  var allAttributes2= `<table style:"width=100%">
 	<tr>
 		<th>UserID</th>
 		<th>Name</th>
 		<th>Status</th>
 	  </tr>`;
-    var rows2 =``;
+    var rows2=``;
     for(var k=0; k<result.length; k++)
     {
       rows2+= `<tr>
@@ -806,10 +699,8 @@ app.get ('/allUsers', isLoggedIn, function(req, res, next)
       <br>
       <input type="submit" value="Submit">
       <br>
-      </form>
-    </body>
-    </html>`;
-      res.write(resultsPage2+allAttributes2+rows2+endTable2+deleteform+messageHead);
+      </form>`
+      res.write(resultsPage2+allAttributes2+rows2+endTable2+deleteform);
       res.end()
   });
 });
@@ -856,7 +747,7 @@ app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
      </ul>
     </div>
   </nav>`
-  var allAttributes2= `<table id="bookTable", style:"width=100%">
+  var allAttributes2= `<table style:"width=100%">
 	<tr>
 		<th>BookISBN</th>
 		<th>Title</th>
@@ -864,9 +755,9 @@ app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
 		<th>Author</th>
 		<th>Genre</th>
 		<th>UserID</th>
-		<th>Name</th>
+		<th>FirstName</th>
 	  </tr>`;
-    var rows2=``;
+    var rows2;
     for(var k=0; k<result.length; k++)
     {
       rows2+= `<tr>
@@ -885,22 +776,13 @@ app.get('/allCheckedOut',isLoggedIn, function(req, res, next)
   });
 });
 
-app.get('/numUsers',isLoggedIn, function(req, res, next)
+app.get('/allLaptops',isLoggedIn, function(req, res, next)
 {
-  con.query("select count(userID) as mine from Users", function(err,result)
+ //take the results and append them to html.
+  //3) db query: Join- select * from checkedOutBooks (if such a table exists) (join with students, teachers) (using id as joiining condition (present in all the tables))
+  con.query("select * from Checkedout_Laptops", function(err, result)
   {
-    if(err) throw err;
-    else
-  var test = (JSON.stringify(result));
-  console.log(test);
-  var json = JSON.parse(test);
-  console.log(json);
-  console.log(json[1]);
-  console.log(result[0].mine);
-  var num = result[0].mine;
-
-  var pp =20;
-  var myHtml= `<!DOCTYPE html>
+  var resultsPage2= `<!DOCTYPE html>
   <html>
   <head>
   <title> myLibrary | User Page </title>
@@ -920,14 +802,28 @@ app.get('/numUsers',isLoggedIn, function(req, res, next)
        <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
      </ul>
     </div>
-  </nav>
-  <p>There are currently: </p>`
-
-
-
-res.write(myHtml + num + " users registered in the database.");
-res.end();
-  });//end from the query
+  </nav>`
+  var allAttributes2= `<table style:"width=100%">
+	<tr>
+		<th>LaptopID</th>
+		<th>Brand</th>
+		<th>UserID</th>
+		<th>Quantity</th>
+	  </tr>`;
+    var rows2=``;
+    for(var k=0; k<result.length; k++)
+    {
+      rows2+= `<tr>
+      <td>`+result[k].LaptopID+`</td>
+      <td>`+result[k].Brand+`</td>
+      <td>`+result[k].UserID+`</td>
+      <td>`+result[k].Quantity+`</td>
+      </tr>`
+    }
+      var endTable2= `</table>`
+      res.write(resultsPage2+allAttributes2+rows2+endTable2);
+      res.end()
+  });
 });
 
 app.get('/allWorkBooks', isLoggedIn, function(req, res, next)
@@ -1014,60 +910,4 @@ app.get('/logout', isLoggedIn, function(req, res, next)
     req.flash('success', `Succesfully logged out.`);
     res.redirect('/');
   });
-});
-
-app.get('/allcheckouters', isLoggedIn, function(req, res, next)
-{
-  //var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
-	con.query("Select UserID, Name From Users U Where Not Exists (select * from Laptops L where not exists (select * from Checkedout C where C.UserID = U.UserID and L.LaptopID = C.LaptopID))", function(err,result)
-{
-  var myHtml= `<!DOCTYPE html>
-  <html>
-  <head>
-  <title> myLibrary | User Page </title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel= "stylesheet" href='./homepage.css'>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  </head>
-  <body>
-    <nav class="navbar navbar-inverse navbar-static-top">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#" style="border-right: 1px solid white;">Welcome to <span style="color: white">myLibrary</span></a>
-      </div>
-      <ul class="nav navbar-nav navbar-right">
-       <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
-     </ul>
-    </div>
-  </nav>`
-
-	//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)		//var allusers= db query: 8) Division: find ids and names from students, teachers who have checked out all the books. (can be max 1)
-if (err) {
- 	console.log(err);
- }
- else {
- 	if (result.length > 0) {
- 		console.log("Division successful");
- 		console.log(result);
- 		var divisionpage = "User that has used all laptops: " + result[0].Name + " with a UserID of: "+result[0].UserID; //note this is incomplete
- 	} else {
-		var divisionpage = "No Users have checked out all laptops";
-	}
- }
-
-  /*if(allUsers > 0)
-  {*/
-  //  var htmlpage= append the user to html and serve the page.
-    var toServe= myHtml + divisionpage;
-    res.write(toServe);
-    res.end();
-  //}
-  /*else
-  {
-    req.flash('error', "No such users found");
-    res.redirect('/librarian');
-  }*/
-});
 });

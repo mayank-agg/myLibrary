@@ -1,0 +1,143 @@
+body {
+background-color: #e2dcc5;
+font-family: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+}
+hr {
+  padding: 0px;
+  margin: 0px;
+}
+#updating {
+  color: black;
+  font-size: 15px;
+  text-decoration: none;
+  position: absolute;
+  top: 65px;
+  left: 5px;
+}
+#updatingt {
+  color: black;
+  font-size: 15px;
+  text-decoration: none;
+  position: absolute;
+  top: 70px;
+  left: 5px;
+}
+#viewWorkBooks {
+  color: black;
+  font-size: 15px;
+  text-decoration: none;
+  position: absolute;
+  top: 85px;
+  left: 5px;
+}
+#viewCheck {
+  color: black;
+  font-size: 15px;
+  text-decoration: none;
+  position: absolute;
+  top: 105px;
+  left: 5px;
+}
+#updating:hover {
+  color: navy;
+  text-decoration: underline;
+}
+#updatingt:hover {
+  color: navy;
+  text-decoration: underline;
+}
+#viewCheck:hover {
+  color: navy;
+  text-decoration: underline;
+}
+#dispWork:hover {
+  color: navy;
+  text-decoration: underline;
+}
+
+#viewWorkBooks:hover {
+  color: navy;
+  text-decoration: underline;
+}
+.form-group {
+  margin: 10px;
+  top: 120px;
+}
+#submitButt {
+  position: absolute;
+  left: 46%;
+  top: 15px;
+  color: black;
+}
+#filterApply {
+  position: relative;
+  left: 50px;
+  top: 10px;
+  color: white;
+}
+#SearchBookTitle {
+  position: relative;
+  top:-12px;
+  color: white;
+}
+#mycontainer {
+  padding: 0px;
+}
+#updateField {
+  position: absolute;
+  top: 70px;
+  left: 5px;
+}
+#updateSubmit {
+  position: absolute;
+  top: 115px;
+  left: 5px;
+}
+#messages {
+  position: absolute;
+  top: 115px;
+  left: 5px;
+  color: red;
+}
+
+#messages3 {
+  position: absolute;
+  top: 135px;
+  left: 5px;
+  color: red;
+}
+
+#bookTable {
+  border: 2px solid black;
+  width: 100%
+}
+tr {
+  border: 1px solid black;
+}
+#messages2 {
+  position: absolute;
+  top: 100px;
+  left: 5px;
+  color: red;
+}
+#welcomeMessage {
+  position: absolute;
+  top:60px;
+  left: 5px;
+  color: darkblue;
+}
+
+#welcomeMessage2 {
+  position: absolute;
+  top:80px;
+  left: 5px;
+  color: darkblue;
+}
+#dispWork {
+  color: black;
+  font-size: 15px;
+  text-decoration: none;
+  position: absolute;
+  top: 30px;
+  left: 5px;
+}
